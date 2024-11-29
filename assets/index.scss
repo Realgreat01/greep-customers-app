@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+
+body {
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  background-color: #f3f3f9;
+  font-optical-sizing: auto;
+}
+
+.green-gradient-background {
+  background: linear-gradient(
+    270deg,
+    #065544 -13%,
+    #068056 48.23%,
+    #0b8e60 108.6%
+  );
+}
+.gray-gradient-background {
+  background: linear-gradient(
+    90.06deg,
+    rgba(154, 163, 171, 0.2) 36.6%,
+    rgba(255, 255, 255, 0.102) 65.23%,
+    rgba(154, 163, 171, 0.102) 89.46%
+  );
+}
+.green-gradient-text {
+  background: linear-gradient(
+    270deg,
+    #065544 -13%,
+    #068056 48.23%,
+    #0b8e60 108.6%
+  );
+  -webkit-background-clip: text; /* For Safari */
+  background-clip: text; /* For modern browsers */
+  color: transparent;
+}
+
+.no-hover:hover {
+  background-color: inherit !important;
+  color: inherit !important;
+  transform: none !important;
+}
+
+.hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Firefox (use scrollbar-width property) */
+  scrollbar-width: none;
+
+  /* Optional fallback for older browsers */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+* {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px #eaeaea;
+    border-radius: 10px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #e6e6f7;
+    border-radius: 10px;
+    height: 10px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #010161;
+  }
+}
+
+input::placeholder,
+.input {
+  color: #a4a8ab !important;
+}
+
+input[type="number"] {
+  -webkit-appearance: none; /* For WebKit browsers */
+  appearance: none; /* For other browsers that support the 'appearance' property */
+  margin: 0; /* Reset margin */
+  -moz-appearance: textfield;
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
