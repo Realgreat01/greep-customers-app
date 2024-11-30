@@ -1,6 +1,6 @@
 <template>
   <div
-    class="my-10 flex w-full flex-col items-center justify-center gap-2 rounded-lg bg-white p-10"
+    class="my-10 flex w-full flex-col items-center justify-center gap-2 rounded-lg p-10"
   >
     <img src="/icon/empty.svg" alt="" class="block h-20 w-20" />
     <p class="w-full text-center">{{ message }}</p>
