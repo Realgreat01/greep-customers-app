@@ -83,8 +83,13 @@ import { GP_ROUTES } from "~/constants/routes";
 import { useVendorStore } from "~/store/vendor.store";
 import type { UserEntity } from "~/types/user";
 
-const { vendorProducts, SelectedVendor, selectedVendor, vendorLoadingStates } =
-  storeToRefs(useVendorStore());
+const {
+  vendorProducts,
+  cart,
+  vendorCarts,
+  selectedVendor,
+  vendorLoadingStates,
+} = storeToRefs(useVendorStore());
 const vendorStore = useVendorStore();
 const route = useRoute();
 const router = useRouter();

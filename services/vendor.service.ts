@@ -23,7 +23,11 @@ export class VendorService {
       method: ApiService.GET,
       url: "/marketplace/products",
       params: {
-        where: JSON.stringify([{ field: "user.id", value: vendorId }]),
+        where: JSON.stringify([
+          { field: "user.id", value: vendorId },
+          { field: "inStock", value: true },
+        ]),
+        whereType: "and",
         ...params,
       },
     });

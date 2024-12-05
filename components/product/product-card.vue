@@ -33,46 +33,31 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center justify-center gap-1">
           <UButton
-            @click="count > 1 && count--"
-            :disabled="count <= 1"
+            @click="quantity > 1 && quantity--"
+            :disabled="quantity <= 1"
             icon="i-icon-minus"
             class="flex h-6 w-6 items-center justify-center bg-green-500 fill-white disabled:bg-green-500"
           />
           <UButton
             variant="ghost"
             class="!font-semibold"
-            :label="count.toString()"
+            :label="quantity.toString()"
           />
           <UButton
-            @click="count++"
+            @click="quantity++"
             icon="i-icon-plus"
             class="flex h-6 w-6 items-center justify-center bg-green-500 fill-white"
           />
         </div>
 
         <UButton
-          label="Order Now"
+          label="Add To Cart"
           icon="i-icon-shopping-cart"
-          @click="selectProduct"
+          :disabled="cart.some((cart) => cart.productId === product.id)"
+          @click="addToCart"
         />
       </div>
     </div>
-
-    <USlideover v-model="openRemarksModal" :overlay="false" class="z-[2000]">
-      <SliderCheckoutRemarks @close="openRemarksModal = false" />
-    </USlideover>
-
-    <USlideover
-      v-model="openOrderModal"
-      :overlay="true"
-      prevent-close
-      class="z-[2000]"
-    >
-      <SliderCheckoutDetails
-        @close="openOrderModal = false"
-        @completed="completedOrder"
-      />
-    </USlideover>
   </UCard>
 </template>
 
@@ -80,6 +65,7 @@
 import type { PropType } from "vue";
 import { GP_ROUTES } from "~/constants/routes";
 import { useAuthStore } from "~/store/auth.store";
+import { useUtilsStore } from "~/store/utils.store";
 import { useVendorStore } from "~/store/vendor.store";
 import type { ProductEntity } from "~/types/product";
 
@@ -90,23 +76,18 @@ const props = defineProps({
   },
 });
 const router = useRouter();
-
+const toast = useToast();
 const vendorStore = useVendorStore();
+const { cart } = storeToRefs(useVendorStore());
+const { remarksModal, orderDetailsModal } = storeToRefs(useUtilsStore());
 const { isLoggedIn } = storeToRefs(useAuthStore());
 
-const count = ref(1);
-const openOrderModal = ref(false);
-const openRemarksModal = ref(false);
+const quantity = ref(1);
 
-const completedOrder = () => {
-  openOrderModal.value = false;
-  openRemarksModal.value = true;
-};
-
-const selectProduct = () => {
+const addToCart = () => {
   if (isLoggedIn.value === true) {
-    openOrderModal.value = true;
-    vendorStore.selectProduct(props.product, count.value);
+    toast.add({ title: "Item added to cart succesfully!", color: "green" });
+    vendorStore.addToCart(props.product, quantity.value);
   } else
     navigateTo(
       { name: GP_ROUTES.LOGIN, replace: true },

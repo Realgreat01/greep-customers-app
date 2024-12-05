@@ -5,7 +5,7 @@ import ApiService from "~/services/api-service.service";
 
 import { AuthService } from "~/services/auth.service";
 
-import type { LoginPayload } from "~/types/auth";
+import type { LoginPayload, UserProfilePayload } from "~/types/auth";
 import type { AuthUserEntity } from "~/types/user";
 
 interface UserAuth {
@@ -71,6 +71,20 @@ export const useAuthStore = defineStore("AuthStore", {
       const res = await AuthService.currentUser();
       if (res.success) {
         this.User = res.data;
+      }
+    },
+
+    async updateUser(data: any) {
+      const toast = useToast();
+      const res = await AuthService.updateUserProfile(data);
+      if (res.success) {
+        toast.add({
+          title: "Details updated successfully !",
+          color: "green",
+        });
+
+        await this.authUser();
+        return true;
       }
     },
 

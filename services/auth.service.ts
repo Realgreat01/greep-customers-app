@@ -1,4 +1,8 @@
-import type { LoginPayload, SignupPayload } from "~/types/auth";
+import type {
+  LoginPayload,
+  SignupPayload,
+  UserProfilePayload,
+} from "~/types/auth";
 import ApiService from "./api-service.service";
 
 export class AuthService {
@@ -8,6 +12,17 @@ export class AuthService {
       url: "/auth/user",
     });
   };
+  static updateUserProfile = async (data: UserProfilePayload) => {
+    return await ApiService.run({
+      method: ApiService.PUT,
+      url: "/auth/user",
+      data,
+      headers: {
+        "Content-type": "multipart/form-data",
+      },
+    });
+  };
+
   static login = async (data: LoginPayload) => {
     return await ApiService.run({
       method: ApiService.POST,

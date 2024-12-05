@@ -54,7 +54,7 @@
         </UCard>
       </div>
       <BaseEmptyList
-        v-if="filteredVendors.length === 0"
+        v-else-if="filteredVendors.length === 0"
         message="No vendor found"
         hideButton
       />

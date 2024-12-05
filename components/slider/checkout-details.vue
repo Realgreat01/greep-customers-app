@@ -27,34 +27,35 @@
       >
         by
         <span class="font-semibold">{{
-          selectedProduct.product?.user.publicName
+          selectedVendorCart?.vendor.publicName
         }}</span>
       </UButton>
+      <template v-for="product in selectedVendorCart?.products">
+        <div class="my-2 flex items-center gap-x-4 text-sm">
+          <UAvatar
+            size="sm"
+            class="block rounded-full"
+            :src="product.product.banner.link"
+            :alt="product.product.title"
+          />
 
-      <div class="flex items-center gap-x-4 text-sm">
-        <UAvatar
-          :src="selectedProduct.product?.banner.link"
-          :alt="selectedProduct.product?.title"
-          size="lg"
-          class="block rounded-full"
-        />
+          <div class="">
+            <h2 class="font-semibold">{{ product.product.title }}</h2>
+            <h2 class="italic">x {{ product.quantity }}</h2>
+          </div>
+          <h2 class="ml-auto text-gray-400">
+            Price -
+            <span class="text-primary font-semibold">{{
+              gpNumbers.formatCurrency(
+                (product.product?.price.amount ?? 1) * product.quantity,
 
-        <div class="">
-          <h2 class="font-semibold">{{ selectedProduct.product?.title }}</h2>
-          <h2 class="italic">x{{ selectedProduct.quantity }}</h2>
+                product.product?.price.currency,
+              )
+            }}</span>
+          </h2>
         </div>
-        <h2 class="ml-auto text-gray-400">
-          Price -
-          <span class="text-primary font-semibold">{{
-            gpNumbers.formatCurrency(
-              (selectedProduct.product?.price.amount ?? 1) *
-                selectedProduct.quantity,
-
-              selectedProduct.product?.price.currency,
-            )
-          }}</span>
-        </h2>
-      </div>
+        <UDivider />
+      </template>
     </UCard>
 
     <UCard class="mt-4">
@@ -127,14 +128,14 @@
 
 <script setup lang="ts">
 import { number, object, string, type InferType } from "yup";
-import type { FormSubmitEvent } from "#ui/types";
+import { useGeolocation } from "@vueuse/core";
 import { Form as VeeForm } from "vee-validate";
 import { useVendorStore } from "~/store/vendor.store";
 const emits = defineEmits(["close", "completed"]);
 
 const OrderForm = ref<any>();
 const errors = ref<{ location: any }>({ location: undefined });
-const { selectedProduct } = storeToRefs(useVendorStore());
+const { selectedVendorCart } = storeToRefs(useVendorStore());
 const useCurrentLocation = ref(false);
 
 const schema = object({
@@ -145,6 +146,8 @@ const schema = object({
   location: string().required("Location is required"),
   notes: string().optional(),
 });
+
+const { resume, coords } = useGeolocation();
 
 type Schema = InferType<typeof schema>;
 
@@ -163,7 +166,7 @@ watch(
   useCurrentLocation,
   (value) => {
     if (value === true) {
-      getLocation();
+      resume();
     }
   },
   { deep: true, immediate: true },
@@ -173,10 +176,10 @@ async function checkOutOrder(field: any) {
   try {
     if (state.apartmentName && state.doorNumber && state.location) {
       const whatsappLink = generateWhatsappDirectLink({
-        vendorName: selectedProduct.value.product?.user.publicName ?? "Vendor",
-        productTitle: selectedProduct.value.product?.title ?? "Product",
+        vendorName: "Vendor",
+        productTitle: "Product",
         whatsAppNumber: "+2347062215229",
-        productQuantity: selectedProduct.value.quantity,
+        productQuantity: 2,
         apartmentName: state.apartmentName,
         doorNumber: state.doorNumber,
         location: state.location,
@@ -192,35 +195,11 @@ async function checkOutOrder(field: any) {
   }
 }
 
-const getLocation = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
-  } else {
-    alert("Geolocation is not supported by this browser.");
-  }
-};
 const handleSuccess = (position: any) => {
   const { latitude, longitude } = position.coords;
 
   const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
   state.location = googleMapsLink;
-};
-
-const handleError = (error: any) => {
-  switch (error.code) {
-    case error.PERMISSION_DENIED:
-      errors.value.location = "User denied the request for Geolocation.";
-      break;
-    case error.POSITION_UNAVAILABLE:
-      errors.value.location = "Location information is unavailable.";
-      break;
-    case error.TIMEOUT:
-      errors.value.location = "The request to get user location timed out.";
-      break;
-    case error.UNKNOWN_ERROR:
-      errors.value.location = "An unknown error occurred.";
-      break;
-  }
 };
 </script>
 

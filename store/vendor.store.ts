@@ -1,17 +1,24 @@
 import { defineStore } from "pinia";
 import { VendorService } from "~/services/vendor.service";
-import type { ProductEntity } from "~/types/product";
+import type {
+  ProductEntity,
+  CartEntity,
+  OrderEntity,
+  VendorCartEntity,
+} from "~/types/product";
 import type { UserEntity, Vendor } from "~/types/user";
 
 interface VendorStore {
-  Vendors: UserEntity[] | [];
-  VendorProducts: ProductEntity[] | [];
+  Vendors: UserEntity[];
+  VendorProducts: ProductEntity[];
   SelectedVendor: UserEntity | null;
-  SelectedProduct: { product: ProductEntity | null; quantity: number };
+  Cart: CartEntity[];
+  SelectedVendorCart: VendorCartEntity | null;
   vendorLoadingStates: {
     loadingVendors: boolean;
     loadingProducts: boolean;
   };
+  OrderInfo: OrderEntity | null;
 }
 
 export const useVendorStore = defineStore("VendorStore", {
@@ -19,12 +26,14 @@ export const useVendorStore = defineStore("VendorStore", {
     return {
       Vendors: [],
       VendorProducts: [],
-      SelectedProduct: { product: null, quantity: 1 },
       SelectedVendor: null,
+      Cart: [],
+      SelectedVendorCart: null,
       vendorLoadingStates: {
         loadingVendors: false,
         loadingProducts: false,
       },
+      OrderInfo: null,
     };
   },
 
@@ -38,8 +47,38 @@ export const useVendorStore = defineStore("VendorStore", {
     selectedVendor(state: VendorStore): VendorStore["SelectedVendor"] {
       return state.SelectedVendor;
     },
-    selectedProduct(state: VendorStore): VendorStore["SelectedProduct"] {
-      return state.SelectedProduct;
+
+    cart(state: VendorStore): VendorStore["Cart"] {
+      return state.Cart;
+    },
+
+    selectedVendorCart(state: VendorStore): VendorStore["SelectedVendorCart"] {
+      return state.SelectedVendorCart;
+    },
+
+    orderInfo(state: VendorStore) {
+      return state.OrderInfo;
+    },
+
+    vendorCarts(state: VendorStore) {
+      const groupedProducts: VendorCartEntity[] = [];
+
+      for (let i = 0; i < this.cart.length; i++) {
+        const product = this.cart[i];
+        let group = groupedProducts.find(
+          (g) => g.vendorId === product.vendorId,
+        );
+
+        if (!group) {
+          group = {
+            vendorId: product.vendorId,
+            vendor: product.vendor,
+            products: [product],
+          };
+          groupedProducts.push(group);
+        } else group.products.push(product);
+      }
+      return groupedProducts;
     },
   },
 
@@ -65,8 +104,23 @@ export const useVendorStore = defineStore("VendorStore", {
       this.vendorLoadingStates.loadingProducts = false;
     },
 
-    async selectProduct(product: ProductEntity, quantity: number) {
-      this.SelectedProduct = { product, quantity };
+    addToCart(product: ProductEntity, quantity: number = 1) {
+      const { user } = product;
+      this.Cart.push({
+        productId: product.id,
+        product,
+        vendorId: user.id,
+        vendor: user,
+        quantity,
+      });
+    },
+
+    async selectVendorCart(cart: VendorCartEntity) {
+      this.SelectedVendorCart = cart;
+    },
+
+    setOrderInfo(orderInfo: OrderEntity) {
+      this.OrderInfo = orderInfo;
     },
 
     isStoreOpen(schedule: Vendor["schedule"]) {

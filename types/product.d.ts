@@ -75,7 +75,7 @@ interface Meta {
   total: number;
 }
 
-export interface ProductEntity {
+interface ProductEntity {
   id: string;
   title: string;
   description: string;
@@ -102,4 +102,25 @@ export interface ProductEntity {
       itemName: string;
     };
   };
+}
+
+interface CartEntity {
+  productId: string;
+  product: ProductEntity;
+  vendorId: string;
+  vendor: User;
+  quantity: number;
+}
+
+interface VendorCartEntity {
+  vendorId: CartEntity["vendorId"];
+  vendor: CartEntity["vendor"];
+  products: CartEntity[];
+}
+
+export interface OrderEntity {
+  apartmentName: string;
+  doorNumber: number;
+  location: string;
+  notes?: string;
 }
