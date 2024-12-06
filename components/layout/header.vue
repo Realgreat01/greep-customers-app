@@ -25,7 +25,7 @@
         <h2 class="font-semibold">
           <span class="" v-if="isLoggedIn">
             {{
-              user?.allNames.full !== "" ? user?.allNames.full : "New User"
+              user?.allNames?.full !== "" ? user?.allNames?.full : "New User"
             }}</span
           >
           <span class="" v-else>Guest</span>
@@ -109,6 +109,7 @@
       <SliderCartView
         @open-checkout-modal="openCheckoutDetailsModal"
         @open-full-carts-modal="openPreviewModal"
+        @close="openCartModal = false"
       />
     </USlideover>
 

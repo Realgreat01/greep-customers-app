@@ -1,22 +1,42 @@
 <template>
-  <UCard :ui="{ base: 'h-full' }" v-if="vendorCarts.length !== 0">
+  <UCard
+    v-if="vendorCarts.length !== 0"
+    class="hide-scrollbar h-full overflow-y-scroll"
+    :ui="{ divide: 'divide-white h-full ', body: { padding: 'px-0 sm:p-0' } }"
+  >
+    <template #header>
+      <div class="flex items-center justify-between">
+        <h3 class="invisible">cart</h3>
+        <UIcon
+          size="3xl"
+          class="h-6 w-6 cursor-pointer"
+          name="i-icon-cancel"
+          @click="emit('close')"
+        />
+      </div>
+    </template>
     <UAlert
       icon="i-icon-alert"
       color="green"
       variant="solid"
+      :ui="{ rounded: 'rounded-b-none rounded-t-lg' }"
       description="You can only checkout from one store at a time"
     >
       <template #icon="{ icon }">
         <UIcon :name="icon" color="white" />
       </template>
     </UAlert>
-    <div class="mt-6 grid gap-2">
+    <div class="mt-6 grid gap-2 p-4">
       <div class="grid gap-2" v-for="(cart, index) in vendorCarts">
         <div class="flex items-center justify-between">
           <h2 class="flex items-center gap-2 font-semibold">
             {{ cart.vendor.publicName }} <UIcon name="i-icon-verified-badge" />
           </h2>
-          <UIcon name="i-icon-trash" @click="vendorCarts.splice(index, 1)" />
+          <UIcon
+            name="i-icon-trash"
+            class="h-5 w-5"
+            @click="deleteVendorCart(cart.vendorId)"
+          />
         </div>
         <UAvatarGroup size="xl" square :max="4">
           <UAvatar
@@ -67,14 +87,37 @@
   </UCard>
 
   <UCard
-    :ui="{ base: 'h-full flex flex-col items-center justify-center' }"
     v-else
+    class="hide-scrollbar h-full w-full overflow-y-scroll"
+    :ui="{
+      ring: 'ring-0 ring-gray-200 dark:ring-gray-800',
+      divide: 'divide-white h-full',
+    }"
   >
-    <img src="/icon/empty-cart.svg" alt="" />
-    <h2 class="flex flex-col items-center justify-center gap-4">
-      <span class="block font-semibold"> Your cart is empty </span>
-      <span class="text-gray text-sm"> Check out what's trending </span>
-    </h2>
+    <template #header>
+      <div class="flex w-full items-center justify-between">
+        <h3 class="invisible">.</h3>
+        <UIcon
+          size="3xl"
+          class="h-6 w-6 cursor-pointer"
+          name="i-icon-cancel"
+          @click="emit('close')"
+        />
+      </div>
+    </template>
+    <UCard
+      :ui="{
+        ring: 'ring-0 ',
+        shadow: 'shadow-none',
+        base: 'h-full flex flex-col border-none items-center justify-center',
+      }"
+    >
+      <img src="/icon/empty-cart.svg" alt="" />
+      <h2 class="flex flex-col items-center justify-center gap-4">
+        <span class="block font-semibold"> Your cart is empty </span>
+        <span class="text-gray text-sm"> Check out what's trending </span>
+      </h2>
+    </UCard>
   </UCard>
 </template>
 
@@ -82,17 +125,23 @@
 import { useVendorStore } from "~/store/vendor.store";
 import type { VendorCartEntity } from "~/types/product";
 
-const { vendorCarts } = storeToRefs(useVendorStore());
+const toast = useToast();
+const { vendorCarts, Cart } = storeToRefs(useVendorStore());
 const vendorStore = useVendorStore();
 
-const emits = defineEmits(["openCheckoutModal", "openFullCartsModal"]);
+const emit = defineEmits(["openCheckoutModal", "openFullCartsModal", "close"]);
 const openCheckoutModal = (cart: VendorCartEntity) => {
   vendorStore.selectVendorCart(cart);
-  emits("openCheckoutModal");
+  emit("openCheckoutModal");
 };
 const openFullCartModal = (cart: VendorCartEntity) => {
   vendorStore.selectVendorCart(cart);
-  emits("openFullCartsModal");
+  emit("openFullCartsModal");
+};
+
+const deleteVendorCart = (vendorId: string) => {
+  Cart.value = Cart.value.filter((cart) => cart.vendorId !== vendorId);
+  toast.add({ title: "Vendor carts deleted successfully!", color: "red" });
 };
 </script>
 

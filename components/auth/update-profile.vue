@@ -20,6 +20,7 @@
       <UFormGroup label="Phone" name="phone" required>
         <VueTelInput
           v-bind="telProps"
+          v-model="state.phone"
           class="!focus-visible:outline-none !focus-visible:ring-2 !focus-within:border-[#000] !focus-visible:ring-ring !focus-visible:ring-offset-2 !border-input !ring-offset-background !rounded-md !border py-1 !shadow-none"
           @validate="showOptions"
         />
@@ -70,6 +71,7 @@ const state: UserProfilePayload = reactive({
   firstName: user.value?.name.first ?? "",
   lastName: user.value?.name.last ?? "",
   username: user.value?.username ?? "",
+  phone: `${user.value?.phone?.code}${user.value?.phone?.number}`,
 });
 
 const router = useRouter();

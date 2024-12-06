@@ -24,8 +24,8 @@ export default defineAppConfig({
         color: "white",
         variant: "outline",
       },
-
-      base: "disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none border-0 border-gray-50",
+      rounded: "rounded-lg",
+      base: "disabled:cursor-not-allowed  disabled:opacity-50 focus:outline-none ring-0 shadow-none border-0 border-gray-50",
     },
     formGroup: {
       label: {

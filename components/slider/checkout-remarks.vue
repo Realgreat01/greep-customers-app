@@ -9,11 +9,10 @@
     <template #header>
       <div class="flex items-center justify-between">
         <h3 class="invisible">.</h3>
-        <UButton
-          color="gray"
-          variant="ghost"
-          icon="i-heroicons-x-mark-20-solid"
-          class="-my-1"
+        <UIcon
+          size="3xl"
+          class="h-6 w-6 cursor-pointer"
+          name="i-icon-cancel"
           @click="closeSlider"
         />
       </div>

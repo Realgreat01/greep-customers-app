@@ -18,7 +18,7 @@ interface VendorStore {
     loadingVendors: boolean;
     loadingProducts: boolean;
   };
-  OrderInfo: OrderEntity | null;
+  OrderInfo: OrderEntity;
 }
 
 export const useVendorStore = defineStore("VendorStore", {
@@ -29,11 +29,16 @@ export const useVendorStore = defineStore("VendorStore", {
       SelectedVendor: null,
       Cart: [],
       SelectedVendorCart: null,
+      OrderInfo: {
+        apartmentName: undefined,
+        doorNumber: undefined,
+        location: undefined,
+        notes: "",
+      },
       vendorLoadingStates: {
         loadingVendors: false,
         loadingProducts: false,
       },
-      OrderInfo: null,
     };
   },
 

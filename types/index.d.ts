@@ -1,8 +1,8 @@
-export {};
+import type { CartEntity } from "./product";
 
 export interface WhatsAppMessage {
   vendorName: string;
-  productTitle: string;
+  products?: CartEntity[];
   whatsAppNumber: string;
   productQuantity: number;
   apartmentName: string;

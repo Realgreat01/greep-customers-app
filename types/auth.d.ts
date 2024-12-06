@@ -10,6 +10,6 @@ export interface UserProfilePayload {
   firstName: string;
   lastName: string;
   username: string;
-  phone?: { code: string; number: string };
+  phone?: { code: string; number: string } | string;
   photo?: File | any;
 }

@@ -6,19 +6,20 @@
     <template #header>
       <div class="flex items-center justify-between">
         <h3
-          class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+          class="text-lg font-semibold leading-6 text-gray-900 dark:text-white"
         >
           Order Details
         </h3>
-        <UButton
-          color="gray"
-          variant="ghost"
-          icon="i-heroicons-x-mark-20-solid"
-          class="-my-1"
+        <UIcon
+          size="3xl"
+          class="h-6 w-6 cursor-pointer"
+          name="i-icon-cancel"
           @click="closeSlider"
         />
       </div>
     </template>
+
+    order info {{ state.location }}
     <UCard>
       <UButton
         class="gray-gradient-background ml-auto flex h-6 w-max self-end justify-self-end"
@@ -78,12 +79,7 @@
             <UInput v-model.number="state.doorNumber" type="number" />
           </UFormGroup>
 
-          <UFormGroup
-            label="Location"
-            name="location"
-            required
-            eager-validation
-          >
+          <UFormGroup label="Location" name="location" required>
             <UButton
               v-if="useCurrentLocation"
               :class="state.location && 'bg-green-100'"
@@ -98,6 +94,7 @@
             <UCheckbox
               v-model="useCurrentLocation"
               name="location"
+              @change="getUserLocation"
               size="lg"
               label="Use current location"
             />
@@ -131,11 +128,13 @@ import { number, object, string, type InferType } from "yup";
 import { useGeolocation } from "@vueuse/core";
 import { Form as VeeForm } from "vee-validate";
 import { useVendorStore } from "~/store/vendor.store";
+import type { OrderEntity } from "~/types/product";
 const emits = defineEmits(["close", "completed"]);
 
 const OrderForm = ref<any>();
 const errors = ref<{ location: any }>({ location: undefined });
-const { selectedVendorCart } = storeToRefs(useVendorStore());
+const { selectedVendorCart, orderInfo } = storeToRefs(useVendorStore());
+const vendorStore = useVendorStore();
 const useCurrentLocation = ref(false);
 
 const schema = object({
@@ -147,37 +146,53 @@ const schema = object({
   notes: string().optional(),
 });
 
-const { resume, coords } = useGeolocation();
+// const { resume, coords } = useGeolocation();
 
 type Schema = InferType<typeof schema>;
 
-const state = reactive<any>({
-  apartmentName: undefined,
-  doorNumber: undefined,
-  location: undefined,
-  notes: undefined,
+const state = reactive<OrderEntity>({
+  apartmentName: orderInfo.value?.apartmentName,
+  doorNumber: orderInfo.value?.doorNumber,
+  location: orderInfo.value?.location,
+  notes: "",
 });
 
 const closeSlider = () => {
   emits("close");
 };
 
-watch(
-  useCurrentLocation,
-  (value) => {
-    if (value === true) {
-      resume();
-    }
-  },
-  { deep: true, immediate: true },
-);
+const success = (position: any) => {
+  const { latitude, longitude } = position.coords;
+  const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+  state.location = googleMapsLink;
+};
+
+const error = (error: any) => {
+  console.log(error);
+};
+
+// This will open permission popu
+const getUserLocation = () => {
+  navigator.geolocation.getCurrentPosition(success, error);
+};
+
+// watch(
+//   useCurrentLocation,
+//   (value) => {
+//     if (value === true) {
+//       // resume();
+//       getUserLocation();
+//     }
+//   },
+//   { deep: true, immediate: true },
+// );
 
 async function checkOutOrder(field: any) {
   try {
     if (state.apartmentName && state.doorNumber && state.location) {
       const whatsappLink = generateWhatsappDirectLink({
-        vendorName: "Vendor",
-        productTitle: "Product",
+        vendorName: selectedVendorCart.value?.vendor.publicName ?? "Vendor",
+        products: selectedVendorCart.value?.products,
         whatsAppNumber: "+2347062215229",
         productQuantity: 2,
         apartmentName: state.apartmentName,
@@ -185,7 +200,7 @@ async function checkOutOrder(field: any) {
         location: state.location,
         notes: state.notes,
       });
-
+      vendorStore.setOrderInfo(state);
       window.open(whatsappLink, "_blank");
       emits("completed");
     }
@@ -194,13 +209,6 @@ async function checkOutOrder(field: any) {
     console.error("Validation failed", validationError);
   }
 }
-
-const handleSuccess = (position: any) => {
-  const { latitude, longitude } = position.coords;
-
-  const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-  state.location = googleMapsLink;
-};
 </script>
 
 <style scoped></style>

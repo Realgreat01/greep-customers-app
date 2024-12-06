@@ -1,19 +1,30 @@
 <template>
   <UCard
     :ui="{
-      base: 'overflow-hidden  h-full grid gap-2',
+      base: 'overflow-hidden flex flex-col h-full ',
       body: {
         padding: 'px-0 py-0 sm:p-0',
       },
     }"
   >
-    <div class="flex h-full flex-1 flex-col justify-between">
-      <div class="hide-scrollbar h-[95%] overflow-y-scroll pb-4 pt-0">
-        <h2
-          class="flex h-12 w-full items-center justify-center gap-2 bg-green-500 p-4 text-center font-semibold text-white"
+    <template #header>
+      <div class="flex items-center justify-between">
+        <h3 class="invisible">.</h3>
+        <UIcon
+          size="3xl"
+          class="h-6 w-6 cursor-pointer"
+          name="i-icon-cancel"
+          @click="emit('close')"
+        />
+      </div>
+    </template>
+    <div class="flex min-h-[90vh] flex-1 flex-col justify-between">
+      <div class="hide-scrollbar h-full overflow-y-scroll pb-4 pt-0">
+        <div
+          class="flex h-12 w-full items-center justify-center gap-2 rounded-t-lg bg-green-500 p-4 text-center font-semibold text-white"
         >
           {{ selectedVendorCart?.vendor.publicName }}
-        </h2>
+        </div>
         <div class="mt-6 grid gap-2 p-4">
           <div
             class="grid gap-2"
@@ -45,7 +56,7 @@
                 icon="i-icon-trash"
                 variant="ghost"
                 color="red"
-                @click="selectedVendorCart?.products.splice(index, 1)"
+                @click="removeItemFromCart(product.productId, index)"
                 class="text-sm font-normal"
                 :ui="{ font: 'font-normal' }"
               />
@@ -98,13 +109,23 @@ defineProps({
     required: true,
   },
 });
-
-const { vendorCarts, selectedVendorCart } = storeToRefs(useVendorStore());
+const toast = useToast();
+const { vendorCarts, selectedVendorCart, SelectedVendorCart, Cart } =
+  storeToRefs(useVendorStore());
 const vendorStore = useVendorStore();
-const emits = defineEmits(["openCheckoutModal", "openFullCartsModal"]);
+const emit = defineEmits(["openCheckoutModal", "openFullCartsModal", "close"]);
 const openCheckoutModal = (cart: VendorCartEntity) => {
   vendorStore.selectVendorCart(cart);
-  emits("openCheckoutModal");
+  emit("openCheckoutModal");
+};
+
+const removeItemFromCart = (productId: string, productIndex: number) => {
+  SelectedVendorCart?.value?.products.splice(productIndex, 1);
+  Cart.value = Cart.value.filter((cart) => cart.productId !== productId);
+  toast.add({ title: "Product removed successfully!", color: "red" });
+  if (selectedVendorCart.value?.products.length === 0) {
+    emit("close");
+  }
 };
 </script>
 

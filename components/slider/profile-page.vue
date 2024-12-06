@@ -2,9 +2,20 @@
   <UCard
     class=""
     :ui="{
-      base: 'h-full flex items-center px-6 grid gap-2',
+      base: 'h-full items-center px-6',
     }"
   >
+    <template #header>
+      <div class="mb-10 flex items-center justify-between">
+        <h3 class="invisible">.</h3>
+        <UIcon
+          size="3xl"
+          class="h-6 w-6 cursor-pointer"
+          name="i-icon-cancel"
+          @click="emit('close')"
+        />
+      </div>
+    </template>
     <UChip
       size="xl"
       position="bottom-right"
@@ -67,7 +78,7 @@ const profile = computed(() => [
   },
 ]);
 
-const emit = defineEmits(["updateUserProfile"]);
+const emit = defineEmits(["updateUserProfile", "close"]);
 </script>
 
 <style scoped></style>

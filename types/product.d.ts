@@ -119,8 +119,8 @@ interface VendorCartEntity {
 }
 
 export interface OrderEntity {
-  apartmentName: string;
-  doorNumber: number;
-  location: string;
+  apartmentName: string | undefined;
+  doorNumber: number | undefined;
+  location: string | undefined;
   notes?: string;
 }
