@@ -1,6 +1,6 @@
 interface Price {
   amount: number;
-  currency: string;
+  currency: "NGN" | "USD" | "TRY";
 }
 
 interface ImageDetails {

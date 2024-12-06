@@ -14,12 +14,11 @@
           size="3xl"
           class="h-6 w-6 cursor-pointer"
           name="i-icon-cancel"
-          @click="closeSlider"
+          @click="emit('close')"
         />
       </div>
     </template>
 
-    order info {{ state.location }}
     <UCard>
       <UButton
         class="gray-gradient-background ml-auto flex h-6 w-max self-end justify-self-end"
@@ -44,8 +43,10 @@
             <h2 class="font-semibold">{{ product.product.title }}</h2>
             <h2 class="italic">x {{ product.quantity }}</h2>
           </div>
-          <h2 class="ml-auto text-gray-400">
-            Price -
+          <h2 class="ml-auto flex items-center text-sm text-gray-400">
+            Price&nbsp;&nbsp;
+            <hr class="w-4 border" />
+            &nbsp;&nbsp;
             <span class="text-primary font-semibold">{{
               gpNumbers.formatCurrency(
                 (product.product?.price.amount ?? 1) * product.quantity,
@@ -57,6 +58,33 @@
         </div>
         <UDivider />
       </template>
+      <div class="ml-auto mt-4 flex flex-col items-end">
+        <h2 class="ml-auto flex items-center text-sm text-gray-400">
+          Total&nbsp;&nbsp;&nbsp;
+          <hr class="w-20 border" />
+          &nbsp;&nbsp;&nbsp;
+          <span
+            class="text-primary font-semibold"
+            v-if="selectedVendorCart?.products"
+          >
+            {{
+              gpNumbers.formatCurrency(
+                utilStore.getTotalProductCost([
+                  ...selectedVendorCart.products.map((x) => ({
+                    amount: x.product.price.amount * x.quantity,
+                    currency: x.product.price.currency,
+                  })),
+                ]).amount,
+                "TRY",
+              )
+            }}
+          </span>
+
+          <span class="text-primary font-semibold" v-else>{{
+            gpNumbers.formatCurrency(0, "TRY")
+          }}</span>
+        </h2>
+      </div>
     </UCard>
 
     <UCard class="mt-4">
@@ -81,23 +109,39 @@
 
           <UFormGroup label="Location" name="location" required>
             <UButton
-              v-if="useCurrentLocation"
-              :class="state.location && 'bg-green-100'"
-              variant="outline"
+              :class="coords.accuracy !== 0 && 'bg-green-200'"
+              variant="soft"
+              :color="loadingLocation ? 'primary' : 'green'"
               block
-              class="h-12 ring-gray-300"
+              :disabled="coords.accuracy !== 0"
+              :loading="loadingLocation"
+              @click="getUserLocation"
+              class="h-12 text-sm ring-gray-300"
               icon="i-icon-location-drop"
             >
+              <span
+                class="text-xs font-light text-brand"
+                v-if="loadingLocation"
+              >
+                Getting Current Location
+              </span>
+              <span class="text-xs font-light text-brand" v-else>
+                {{
+                  coords.accuracy !== 0
+                    ? state.location
+                    : "Use current location"
+                }}
+              </span>
             </UButton>
-            <BaseLocationPicker v-else v-model="state.location" />
+            <BaseLocationPicker v-model="state.location" hidden />
 
-            <UCheckbox
-              v-model="useCurrentLocation"
+            <!-- <UCheckbox
+              :model-value="useCurrentLocation"
               name="location"
-              @change="getUserLocation"
+               @change="resume"
               size="lg"
               label="Use current location"
-            />
+            /> -->
           </UFormGroup>
 
           <UFormGroup
@@ -129,13 +173,16 @@ import { useGeolocation } from "@vueuse/core";
 import { Form as VeeForm } from "vee-validate";
 import { useVendorStore } from "~/store/vendor.store";
 import type { OrderEntity } from "~/types/product";
-const emits = defineEmits(["close", "completed"]);
+import { useUtilsStore } from "~/store/utils.store";
+const emit = defineEmits(["close", "completed"]);
 
 const OrderForm = ref<any>();
 const errors = ref<{ location: any }>({ location: undefined });
-const { selectedVendorCart, orderInfo } = storeToRefs(useVendorStore());
+const { selectedVendorCart, orderInfo, Cart, selectedVendor } =
+  storeToRefs(useVendorStore());
 const vendorStore = useVendorStore();
-const useCurrentLocation = ref(false);
+const utilStore = useUtilsStore();
+const loadingLocation = ref(false);
 
 const schema = object({
   apartmentName: string().required("Apartment name is required"),
@@ -146,7 +193,7 @@ const schema = object({
   notes: string().optional(),
 });
 
-// const { resume, coords } = useGeolocation();
+const { resume, coords } = useGeolocation();
 
 type Schema = InferType<typeof schema>;
 
@@ -157,35 +204,40 @@ const state = reactive<OrderEntity>({
   notes: "",
 });
 
-const closeSlider = () => {
-  emits("close");
-};
-
-const success = (position: any) => {
-  const { latitude, longitude } = position.coords;
-  const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-  state.location = googleMapsLink;
-};
-
-const error = (error: any) => {
-  console.log(error);
-};
-
 // This will open permission popu
-const getUserLocation = () => {
-  navigator.geolocation.getCurrentPosition(success, error);
-};
+watch(
+  coords,
+  (coords) => {
+    if (
+      (coords.latitude !== null || Infinity) &&
+      (coords.longitude !== null || Infinity)
+    ) {
+      const googleMapsLink = `https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
+      state.location = googleMapsLink;
+      loadingLocation.value = false;
+    }
+  },
+  { deep: true },
+);
 
-// watch(
-//   useCurrentLocation,
-//   (value) => {
-//     if (value === true) {
-//       // resume();
-//       getUserLocation();
-//     }
-//   },
-//   { deep: true, immediate: true },
-// );
+const getUserLocation = () => {
+  loadingLocation.value = true;
+  resume();
+  watch(
+    coords,
+    (coords) => {
+      if (
+        (coords.latitude !== null || Infinity) &&
+        (coords.longitude !== null || Infinity)
+      ) {
+        const googleMapsLink = `https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
+        state.location = googleMapsLink;
+        loadingLocation.value = false;
+      }
+    },
+    { deep: true },
+  );
+};
 
 async function checkOutOrder(field: any) {
   try {
@@ -195,14 +247,31 @@ async function checkOutOrder(field: any) {
         products: selectedVendorCart.value?.products,
         whatsAppNumber: "+2347062215229",
         productQuantity: 2,
+        totalCost:
+          selectedVendorCart?.value?.products !== null &&
+          selectedVendorCart?.value !== null
+            ? gpNumbers.formatCurrency(
+                utilStore.getTotalProductCost([
+                  ...selectedVendorCart.value.products.map((x) => ({
+                    amount: x.product.price.amount * x.quantity,
+                    currency: x.product.price.currency,
+                  })),
+                ]).amount,
+                "TRY",
+              )
+            : gpNumbers.formatCurrency(0, "TRY"),
         apartmentName: state.apartmentName,
         doorNumber: state.doorNumber,
         location: state.location,
         notes: state.notes,
       });
       vendorStore.setOrderInfo(state);
+
+      Cart.value = Cart.value.filter(
+        (cart) => cart.vendorId !== selectedVendorCart.value?.vendorId,
+      );
       window.open(whatsappLink, "_blank");
-      emits("completed");
+      emit("completed");
     }
   } catch (validationError) {
     // Handle validation error

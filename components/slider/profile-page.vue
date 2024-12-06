@@ -1,6 +1,6 @@
 <template>
   <UCard
-    class=""
+    class="hide-scrollbar h-full overflow-y-scroll"
     :ui="{
       base: 'h-full items-center px-6',
     }"

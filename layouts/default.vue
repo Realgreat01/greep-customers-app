@@ -8,15 +8,17 @@
 <script setup lang="ts">
 import { VendorService } from "~/services/vendor.service";
 import { useAuthStore } from "~/store/auth.store";
+import { useUtilsStore } from "~/store/utils.store";
 import { useVendorStore } from "~/store/vendor.store";
 
 const vendorStore = useVendorStore();
 
 const authStore = useAuthStore();
+const utilsStore = useUtilsStore();
 
-onMounted(async () => {
+onBeforeMount(async () => {
   await vendorStore.getVendors();
-  await VendorService.getVendors();
+  await utilsStore.getExchangeRate();
 });
 </script>
 

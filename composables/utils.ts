@@ -5,15 +5,19 @@ export const generateWhatsappDirectLink = (details: WhatsAppMessage) => {
     (product, index) => `
 *Product:*  ${product.product.title}
 *Quantity:*  x${product.quantity}
+*Cost:*  ${gpNumbers.formatCurrency(product.product.price.amount, product.product.price.currency)}
     `,
   );
 
   const message = `
 
-Hello *${details.vendorName}*, I’d like to order the following items:
+Hello *${details.vendorName}*, I'd like to order the following items:
 __________________________________
 
 ${products?.join(" ")}
+__________________________________
+
+*TOTAL COST:*   ${details.totalCost}
 __________________________________
 
 *Apartment name:* ${details.apartmentName}

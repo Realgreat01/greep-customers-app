@@ -4,7 +4,7 @@
       class="green-gradient-text mx-auto w-fit bg-clip-text text-center text-xl font-bold text-transparent lg:text-4xl"
     >
       Search for the Best Vendors <br />
-      and Delicious Menus!
+      for your Delicious Menus!
     </h2>
     <div
       class="mx-auto flex w-full items-center rounded-full border-2 bg-white pl-2 lg:w-1/2"
@@ -23,6 +23,7 @@
         <USelectMenu
           variant="none"
           class="w-28 lg:w-32"
+          value-attribute="type"
           v-model="selectedCategory"
           :options="categories"
           placeholder="Category"
@@ -69,13 +70,23 @@
 import { useVendorStore } from "~/store/vendor.store";
 const searchedTerm = ref("");
 const { vendors, vendorLoadingStates } = storeToRefs(useVendorStore());
-const categories = ref(["Food", "Market"]);
+const categories = ref([
+  { type: "", label: "All Vendors" },
+  { type: "foods", label: "Foods" },
+  { type: "items", label: "Market" },
+]);
 const selectedCategory = ref("");
 
 const filteredVendors = computed(() =>
-  vendors.value.filter((vendor) =>
-    vendor.publicName.toLowerCase().includes(searchedTerm.value.toLowerCase()),
-  ),
+  vendors.value
+    .filter((vendor) =>
+      vendor.publicName
+        .toLowerCase()
+        .includes(searchedTerm.value.toLowerCase()),
+    )
+    .filter((vendor) =>
+      vendor.type.vendorType.includes(selectedCategory.value),
+    ),
 );
 </script>
 
