@@ -1,43 +1,22 @@
 import { defineStore } from "pinia";
 import { VendorService } from "~/services/vendor.service";
-import type {
-  ProductEntity,
-  CartEntity,
-  OrderEntity,
-  VendorCartEntity,
-} from "~/types/product";
 import type { UserEntity, Vendor } from "~/types/user";
 
 interface VendorStore {
   Vendors: UserEntity[];
-  VendorProducts: ProductEntity[];
   SelectedVendor: UserEntity | null;
-  Cart: CartEntity[];
-  SelectedVendorCart: VendorCartEntity | null;
   vendorLoadingStates: {
     loadingVendors: boolean;
-    loadingProducts: boolean;
   };
-  OrderInfo: OrderEntity;
 }
 
 export const useVendorStore = defineStore("VendorStore", {
   state: (): VendorStore => {
     return {
       Vendors: [],
-      VendorProducts: [],
       SelectedVendor: null,
-      Cart: [],
-      SelectedVendorCart: null,
-      OrderInfo: {
-        apartmentName: undefined,
-        doorNumber: undefined,
-        location: undefined,
-        notes: "",
-      },
       vendorLoadingStates: {
         loadingVendors: false,
-        loadingProducts: false,
       },
     };
   },
@@ -46,44 +25,9 @@ export const useVendorStore = defineStore("VendorStore", {
     vendors(state: VendorStore): VendorStore["Vendors"] {
       return state.Vendors;
     },
-    vendorProducts(state: VendorStore): VendorStore["VendorProducts"] {
-      return state.VendorProducts;
-    },
+
     selectedVendor(state: VendorStore): VendorStore["SelectedVendor"] {
       return state.SelectedVendor;
-    },
-
-    cart(state: VendorStore): VendorStore["Cart"] {
-      return state.Cart;
-    },
-
-    selectedVendorCart(state: VendorStore): VendorStore["SelectedVendorCart"] {
-      return state.SelectedVendorCart;
-    },
-
-    orderInfo(state: VendorStore) {
-      return state.OrderInfo;
-    },
-
-    vendorCarts(state: VendorStore) {
-      const groupedProducts: VendorCartEntity[] = [];
-
-      for (let i = 0; i < this.cart.length; i++) {
-        const product = this.cart[i];
-        let group = groupedProducts.find(
-          (g) => g.vendorId === product.vendorId,
-        );
-
-        if (!group) {
-          group = {
-            vendorId: product.vendorId,
-            vendor: product.vendor,
-            products: [product],
-          };
-          groupedProducts.push(group);
-        } else group.products.push(product);
-      }
-      return groupedProducts;
     },
   },
 
@@ -100,32 +44,6 @@ export const useVendorStore = defineStore("VendorStore", {
       const res = await VendorService.getSelectedVendor(vendorId);
       this.SelectedVendor = res.data;
       this.vendorLoadingStates.loadingVendors = false;
-    },
-
-    async getVendorProducts(id: string) {
-      this.vendorLoadingStates.loadingProducts = true;
-      const res = await VendorService.getVendorProducts(id);
-      this.VendorProducts = res.data.results;
-      this.vendorLoadingStates.loadingProducts = false;
-    },
-
-    addToCart(product: ProductEntity, quantity: number = 1) {
-      const { user } = product;
-      this.Cart.push({
-        productId: product.id,
-        product,
-        vendorId: user.id,
-        vendor: user,
-        quantity,
-      });
-    },
-
-    async selectVendorCart(cart: VendorCartEntity) {
-      this.SelectedVendorCart = cart;
-    },
-
-    setOrderInfo(orderInfo: OrderEntity) {
-      this.OrderInfo = orderInfo;
     },
 
     isStoreOpen(schedule: Vendor["schedule"]) {

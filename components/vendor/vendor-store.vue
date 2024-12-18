@@ -1,42 +1,112 @@
 <template>
-  <div class="flex flex-col px-4 py-10 lg:px-24">
+  <div class="flex flex-col px-4">
     <UButton
       icon="i-icon-arrow-left"
       label="Back"
-      variant="ghost"
-      class="flex w-fit items-center"
+      variant="outline"
+      color="gray"
+      :ui="{ rounded: 'rounded-3xl' }"
+      class="flex w-fit items-center text-black ring-gray-500"
       @click="router.push({ name: GP_ROUTES.DASHBOARD.HOME })"
     />
 
-    <div
-      v-if="selectedVendor"
-      class="mx-auto flex flex-col items-center justify-center gap-4 lg:w-2/3"
-    >
-      <UAvatar
+    <div v-if="selectedVendor" class="mx-auto my-5 flex w-full flex-col gap-4">
+      <img
         :alt="selectedVendor.publicName"
-        size="3xl"
-        :src="selectedVendor?.bio?.photo?.link"
+        class="h-[237px] w-full rounded-xl object-cover object-[40%]"
+        :src="selectedVendor?.bio?.photo?.link ?? '/blank.png'"
       />
 
-      <h2 class="text-lg font-semibold">
-        {{
-          selectedVendor.publicName !== ""
-            ? selectedVendor.publicName
-            : "Greep Store"
-        }}
-      </h2>
+      <div class="flex items-center justify-between">
+        <VendorName
+          class="text-xl font-semibold"
+          :name="
+            selectedVendor.publicName !== ''
+              ? selectedVendor.publicName
+              : 'Greep Store'
+          "
+        />
+        <UButton
+          icon="i-icon-camera"
+          size="xl"
+          label="Message Store"
+          color="green"
+          :ui="{ rounded: 'rounded-full' }"
+        />
+      </div>
 
-      <VendorStatus :schedule="selectedVendor?.vendor.schedule ?? null" />
+      <div class="flex items-center justify-between">
+        <div class="flex gap-x-10">
+          <h2 class="text-xs text-[#7E8392]">
+            Opening Hours
+            <span class="block text-sm text-black">{{
+              gpDates.getVendorSchedule(selectedVendor.vendor.schedule)
+            }}</span>
+          </h2>
 
-      <p class="py-6 text-center text-gray-400">
-        {{ generateVendorDescription(selectedVendor.type) }}
-        <!-- {{ words }} -->
-      </p>
+          <h2
+            class="text-xs text-[#7E8392]"
+            v-if="selectedVendor.vendor.averagePrepTimeInMins"
+          >
+            Delivery Time
+            <span class="block text-sm text-black">
+              {{
+                gpDates.getTimeDifference(
+                  selectedVendor.vendor.averagePrepTimeInMins.from,
+                  selectedVendor.vendor.averagePrepTimeInMins.to,
+                )
+              }}
+            </span>
+          </h2>
+        </div>
+
+        <UInput
+          icon="i-icon-search-icon"
+          size="sm"
+          color="white"
+          :trailing="false"
+          :ui="{ rounded: 'rounded-3xl' }"
+          placeholder="Search Store"
+        />
+      </div>
+
+      <!-- <VendorStatus :schedule="selectedVendor?.vendor.schedule ?? null" /> -->
     </div>
 
+    <div class="py-2">
+      <h2 class="text-xl font-semibold">Reviews and Rating</h2>
+      <div class="flex w-full items-center gap-x-3">
+        <UCard class="h-[236px] w-96">
+          <div class="flex min-h-[180px] w-full flex-col justify-between gap-2">
+            <UMeter
+              color="green"
+              size="lg"
+              block
+              :value="i * 10 + 40"
+              v-for="i in 5"
+            />
+          </div>
+        </UCard>
+
+        <div
+          class="hide-scrollbar flex flex-1 items-center gap-x-2 overflow-scroll p-1"
+        >
+          <UCard class="h-[240px] min-w-96" v-for="item in reviews">
+            <h2 class="font-semibold">
+              {{ item.user }}
+              <span class="ml-2 text-xs font-normal text-gray-400">
+                {{ gpDates.getTimeAgo(item.time) }}</span
+              >
+            </h2>
+            <UIcon name="i-icon-star" v-for="i in item.rating" />
+            <p class="text-sm text-gray-500">{{ item.review }}</p>
+          </UCard>
+        </div>
+      </div>
+    </div>
     <div class="py-5 lg:py-10">
       <div
-        v-if="vendorLoadingStates.loadingProducts"
+        v-if="productLoadingStates.loadingProducts"
         class="mx-auto flex flex-wrap justify-center gap-5 py-10 lg:justify-start"
       >
         <UCard
@@ -70,7 +140,7 @@
       <BaseEmptyList v-else-if="vendorProducts.length === 0" />
       <div
         v-else
-        class="mx-auto flex flex-wrap justify-center gap-5 py-10 lg:justify-start"
+        class="mx-auto flex flex-wrap justify-center gap-1 gap-y-5 py-10 lg:justify-start"
       >
         <ProductCard v-for="product in vendorProducts" :product />
       </div>
@@ -80,26 +150,60 @@
 
 <script setup lang="ts">
 import { GP_ROUTES } from "~/constants/routes";
+import { useProductStore } from "~/store/product.store";
 import { useVendorStore } from "~/store/vendor.store";
 import type { UserEntity } from "~/types/user";
 
-const {
-  vendorProducts,
-  cart,
-  vendorCarts,
-  selectedVendor,
-  vendorLoadingStates,
-} = storeToRefs(useVendorStore());
+const { selectedVendor } = storeToRefs(useVendorStore());
+const { vendorProducts, productLoadingStates } = storeToRefs(useProductStore());
+
+const productStore = useProductStore();
 const vendorStore = useVendorStore();
+
 const route = useRoute();
 const router = useRouter();
-function generateVendorDescription(vendor: UserEntity["type"]) {
-  return `Welcome to ${vendor.name}, we deal in ${vendor.vendorType}. Our location is ${vendor.location.location}, ${vendor.location.description}.`;
-}
 
-onBeforeMount(() => {
-  vendorStore.getVendorProducts(route.params.id as string);
-  vendorStore.getSelectedVendor(route.params.id as string);
+const reviews = ref([
+  {
+    user: "David Jong",
+    rating: 4,
+    time: "2024-12-18T14:34:56.789Z",
+    review:
+      "The service was quite satisfactory overall. The staff were friendly, and the process was smooth. However, there were minor delays that could be improved upon. I would recommend this service to friends, but it would benefit from addressing a few efficiency concerns to enhance the overall experience.",
+  },
+  {
+    user: "Emma Blake",
+    rating: 5,
+    time: "2024-12-16T11:23:45.123Z",
+    review:
+      "Absolutely amazing experience from start to finish! The attention to detail and customer care exceeded all expectations. I couldn’t have asked for a better service, and I will definitely be returning. Kudos to the team for such a professional and seamless experience. Highly recommend!",
+  },
+  {
+    user: "Michael Perez",
+    rating: 3,
+    time: "2024-12-13T08:15:30.456Z",
+    review:
+      "It was okay, but there’s room for improvement. While the service was decent, I felt there were some noticeable gaps in communication and timing. The staff seemed a bit rushed, which impacted the overall experience. With a few tweaks, this could be a top-tier service.",
+  },
+  {
+    user: "Sophia White",
+    rating: 2,
+    time: "2024-12-08T17:42:10.789Z",
+    review:
+      "Not very impressed with the overall experience. The service was below expectations, and there were several miscommunications along the way. The staff tried their best, but I feel like there’s a significant need for better management and customer focus. I hope future experiences improve.",
+  },
+  {
+    user: "Liam Carter",
+    rating: 5,
+    time: "2024-12-17T09:05:25.678Z",
+    review:
+      "Excellent service! From the moment I arrived, everything was handled with utmost professionalism. The staff were knowledgeable, courteous, and went above and beyond to ensure my satisfaction. I would highly recommend this service to anyone looking for a seamless and pleasant experience.",
+  },
+]);
+
+onBeforeMount(async () => {
+  await productStore.getVendorProducts(route.params.id as string);
+  await vendorStore.getSelectedVendor(route.params.id as string);
 });
 </script>
 

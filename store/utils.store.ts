@@ -6,6 +6,7 @@ interface UtilsStore {
   profileModal: boolean;
   checkOutModal: boolean;
   orderDetailsModal: boolean;
+  productPreviewModal: boolean;
   remarksModal: boolean;
   ExchangeRate: { TRY: number; NGN: number; USD: number };
 }
@@ -17,6 +18,7 @@ export const useUtilsStore = defineStore("UtilsStore", {
       profileModal: false,
       checkOutModal: false,
       orderDetailsModal: false,
+      productPreviewModal: false,
       remarksModal: false,
       ExchangeRate: { TRY: 1, NGN: 1, USD: 1 },
     };

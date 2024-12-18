@@ -52,6 +52,7 @@ export const useAuthStore = defineStore("AuthStore", {
           color: "red",
         });
     },
+
     async registerUser(data: LoginPayload) {
       const toast = useToast();
 

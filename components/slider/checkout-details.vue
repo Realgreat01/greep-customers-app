@@ -171,16 +171,15 @@
 import { number, object, string, type InferType } from "yup";
 import { useGeolocation } from "@vueuse/core";
 import { Form as VeeForm } from "vee-validate";
-import { useVendorStore } from "~/store/vendor.store";
 import type { OrderEntity } from "~/types/product";
 import { useUtilsStore } from "~/store/utils.store";
+import { useProductStore } from "~/store/product.store";
 const emit = defineEmits(["close", "completed"]);
 
 const OrderForm = ref<any>();
 const errors = ref<{ location: any }>({ location: undefined });
-const { selectedVendorCart, orderInfo, Cart, selectedVendor } =
-  storeToRefs(useVendorStore());
-const vendorStore = useVendorStore();
+const { selectedVendorCart, orderInfo, Cart } = storeToRefs(useProductStore());
+const productStore = useProductStore();
 const utilStore = useUtilsStore();
 const loadingLocation = ref(false);
 
@@ -265,7 +264,7 @@ async function checkOutOrder(field: any) {
         location: state.location,
         notes: state.notes,
       });
-      vendorStore.setOrderInfo(state);
+      productStore.setOrderInfo(state);
 
       Cart.value = Cart.value.filter(
         (cart) => cart.vendorId !== selectedVendorCart.value?.vendorId,

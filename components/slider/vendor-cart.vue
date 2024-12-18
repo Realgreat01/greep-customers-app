@@ -101,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { useVendorStore } from "~/store/vendor.store";
+import { useProductStore } from "~/store/product.store";
 import type { VendorCartEntity } from "~/types/product";
 
 defineProps({
@@ -110,13 +110,14 @@ defineProps({
     required: true,
   },
 });
+
 const toast = useToast();
-const { vendorCarts, selectedVendorCart, SelectedVendorCart, Cart } =
-  storeToRefs(useVendorStore());
-const vendorStore = useVendorStore();
+const { selectedVendorCart, SelectedVendorCart, Cart } =
+  storeToRefs(useProductStore());
+const productStore = useProductStore();
 const emit = defineEmits(["openCheckoutModal", "openFullCartsModal", "close"]);
 const openCheckoutModal = (cart: VendorCartEntity) => {
-  vendorStore.selectVendorCart(cart);
+  productStore.selectVendorCart(cart);
   emit("openCheckoutModal");
 };
 

@@ -9,7 +9,7 @@ import { GP_ROUTES } from "~/constants/routes";
 import { useUtilsStore } from "~/store/utils.store";
 
 definePageMeta({
-  name: GP_ROUTES.DASHBOARD.VENDOR_STORE,
+  name: GP_ROUTES.MARKET.STORE,
 });
 
 const { remarksModal, orderDetailsModal } = storeToRefs(useUtilsStore());

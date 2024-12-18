@@ -1,26 +1,24 @@
 <template>
   <div
-    class="sticky top-0 z-[100] flex min-w-full items-center justify-between bg-white px-4 py-2 lg:p-4"
+    class="sticky top-0 z-[100] flex h-[76px] min-w-full items-center justify-between border-b bg-white px-4 py-2 lg:p-4"
   >
-    <NuxtLink :to="{ name: GP_ROUTES.DASHBOARD.HOME }">
-      <img src="/logo/greep-full.svg" alt="" class="" />
-    </NuxtLink>
-    <div class="flex gap-2">
-      <UChip
-        :text="cart.length"
-        :show="cart.length > 0"
-        size="2xl"
-        position="top-right"
-        inset
-        color="red"
+    <div class="flex items-center gap-x-2 text-sm font-semibold">
+      <UIcon name="i-icon-location" class="h-5 w-5" />
+      <h2 class="">{{ user?.username }}</h2>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-x-6">
+        <UIcon name="i-icon-sms" class="block h-6 w-6" />
+        <UIcon name="i-icon-alarm" class="block h-6 w-6" />
+      </div>
+      <div
+        @click="openCartModal = true"
+        class="flex h-10 w-16 items-center gap-x-2 rounded-3xl bg-green-500 px-2 font-medium text-white"
       >
-        <UButton
-          @click="openCartModal = true"
-          icon="i-icon-cart"
-          variant="ghost"
-          :padded="true"
-        />
-      </UChip>
+        <UIcon name="i-icon-cart" class="h-6 w-6" />
+        <h2 class="">{{ cart.length }}</h2>
+      </div>
+
       <div class="hidden px-4 text-end lg:block">
         <h2 class="font-semibold">
           <span class="" v-if="isLoggedIn">
@@ -141,11 +139,12 @@
 <script setup lang="ts">
 import { GP_ROUTES } from "~/constants/routes";
 import { useAuthStore } from "~/store/auth.store";
+import { useProductStore } from "~/store/product.store";
 import { useVendorStore } from "~/store/vendor.store";
 
 const openPopup = ref(false);
 const { user, isLoggedIn } = storeToRefs(useAuthStore());
-const { cart, selectedVendorCart } = storeToRefs(useVendorStore());
+const { cart, selectedVendorCart } = storeToRefs(useProductStore());
 const authStore = useAuthStore();
 const router = useRouter();
 

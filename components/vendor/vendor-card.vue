@@ -1,25 +1,42 @@
 <template>
-  <UCard class="grid w-[320px] gap-4">
+  <UCard
+    @click="selectVendor"
+    class="w-80 p-0"
+    :ui="{
+      base: 'overflow-hidden border-none ring-0 grid gap-2',
+      ring: 'ring-0',
+      shadow: 'shadow-none',
+      body: {
+        padding: 'px-0 py-0 sm:p-0',
+      },
+    }"
+  >
     <img
       :src="vendor.bio?.photo?.link ?? '/blank.png'"
       alt=""
-      class="block h-32 w-full object-cover object-center"
+      class="block h-40 w-full rounded-xl object-cover object-center"
     />
-    <h2 class="text-primary my-2 font-bold">
-      {{ vendor.publicName !== "" ? vendor.publicName : "Greep Store" }}
-    </h2>
-    <p class="my-2 text-sm text-gray-400">
-      {{ gpHelpers.sliceWords(generateVendorDescription(vendor.type), 150) }}
-      <!-- {{ words }} -->
-    </p>
-
-    <div class="flex items-center justify-between">
-      <VendorStatus :schedule="vendor.vendor.schedule" />
-      <UButton
-        label="View Store"
-        icon="i-icon-shop-view"
-        @click="selectVendor"
+    <div class="grid gap-2 p-2.5">
+      <VendorName
+        class="text-primary font-semibold"
+        isVerified
+        :name="vendor.publicName !== '' ? vendor.publicName : 'Greep Store'"
       />
+      <UDivider class="" />
+
+      <div class="flex justify-between text-xs text-gray-400">
+        <h2 class="">Starts from</h2>
+
+        <h2
+          class="flex items-center gap-x-2"
+          v-if="vendor.vendor.averagePrepTimeInMins !== null"
+        >
+          <UIcon name="i-icon-time" class="h-4 w-4" />
+
+          {{ vendor.vendor.averagePrepTimeInMins.from }}
+          —— {{ vendor.vendor.averagePrepTimeInMins.from }} mins
+        </h2>
+      </div>
     </div>
   </UCard>
 </template>
@@ -43,14 +60,13 @@ const { SelectedVendor } = storeToRefs(useVendorStore());
 const selectVendor = () => {
   SelectedVendor.value = props.vendor;
   router.push({
-    name: GP_ROUTES.DASHBOARD.VENDOR_STORE,
+    name:
+      props.vendor.type.vendorType === "foods"
+        ? GP_ROUTES.RESTURANT.STORE
+        : GP_ROUTES.MARKET.STORE,
     params: { id: props.vendor.id },
   });
 };
-
-function generateVendorDescription(vendor: UserEntity["type"]) {
-  return `Welcome to ${vendor.name}, we deal in ${vendor.vendorType}. Our location is ${vendor.location.location}, ${vendor.location.description}.`;
-}
 </script>
 
 <style scoped></style>

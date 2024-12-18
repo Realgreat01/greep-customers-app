@@ -18,7 +18,7 @@ interface ToppingsItem {
   inStock: boolean;
 }
 
-interface Toppings {
+interface AddOnProperty {
   minSelection: number;
   maxSelection: number;
   items: {
@@ -27,7 +27,7 @@ interface Toppings {
 }
 
 interface AddOns {
-  toppings: Toppings;
+  [key: string]: AddOnProperty;
 }
 
 interface ProductData {
@@ -123,4 +123,18 @@ export interface OrderEntity {
   doorNumber: number | undefined;
   location: string | undefined;
   notes?: string;
+}
+
+export interface TagEntity {
+  id: string;
+  type: "productsItems" | "productsFoods";
+  title: string;
+  parent: string | null;
+  photo: ImageDetails | null;
+  meta: {
+    productsItems: number;
+    productsFoods: number;
+    orders: number;
+    total: number;
+  };
 }

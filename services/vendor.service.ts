@@ -10,26 +10,30 @@ export class VendorService {
       },
     });
   };
+  static getMarketVendors = async () => {
+    return await ApiService.run({
+      method: ApiService.GET,
+      url: "/users/users",
+      params: {
+        where: JSON.stringify([{ field: "type.vendorType", value: "items" }]),
+      },
+    });
+  };
+
+  static getFoodVendors = async () => {
+    return await ApiService.run({
+      method: ApiService.GET,
+      url: "/users/users",
+      params: {
+        where: JSON.stringify([{ field: "type.vendorType", value: "food" }]),
+      },
+    });
+  };
 
   static getSelectedVendor = async (vendorId: string) => {
     return await ApiService.run({
       method: ApiService.GET,
       url: `/users/users/${vendorId}`,
-    });
-  };
-
-  static getVendorProducts = async (vendorId: string, params?: any) => {
-    return await ApiService.run({
-      method: ApiService.GET,
-      url: "/marketplace/products",
-      params: {
-        where: JSON.stringify([
-          { field: "user.id", value: vendorId },
-          { field: "inStock", value: true },
-        ]),
-        whereType: "and",
-        ...params,
-      },
     });
   };
 }

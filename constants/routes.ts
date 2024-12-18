@@ -5,6 +5,17 @@ export class GP_ROUTES {
 
   static DASHBOARD = {
     HOME: "dashboard-home",
-    VENDOR_STORE: "vendor-store",
+    PRODUCTS_TAG: "dashboard-home tags",
+  };
+  static MARKET = {
+    VENDORS: "vendor-market",
+    STORE: "vendor-market store",
+  };
+  static RESTURANT = {
+    VENDORS: "vendor-foods",
+    STORE: "vendor-foods store",
+  };
+  static SETTINGS = {
+    USER: "settings",
   };
 }
