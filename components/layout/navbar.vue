@@ -4,7 +4,7 @@
   >
     <div class="flex items-center gap-x-2 text-sm font-semibold">
       <UIcon name="i-icon-location" class="h-5 w-5" />
-      <h2 class="">{{ user?.username }}</h2>
+      <h2 class="">{{ userProfile?.type.location.description }}</h2>
     </div>
     <div class="flex items-center gap-4">
       <div class="flex items-center gap-x-6">
@@ -143,7 +143,7 @@ import { useProductStore } from "~/store/product.store";
 import { useVendorStore } from "~/store/vendor.store";
 
 const openPopup = ref(false);
-const { user, isLoggedIn } = storeToRefs(useAuthStore());
+const { user, userProfile, isLoggedIn } = storeToRefs(useAuthStore());
 const { cart, selectedVendorCart } = storeToRefs(useProductStore());
 const authStore = useAuthStore();
 const router = useRouter();

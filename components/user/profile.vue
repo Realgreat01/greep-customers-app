@@ -47,7 +47,7 @@
 <script setup lang="ts">
 import { useAuthStore } from "~/store/auth.store";
 
-const { user, isLoggedIn } = storeToRefs(useAuthStore());
+const { user, userProfile, isLoggedIn } = storeToRefs(useAuthStore());
 const profile = computed(() => [
   { label: "Firstname", icon: "i-icon-profile", value: user.value?.name.first },
   { label: "Lastname", icon: "i-icon-profile", value: user.value?.name.last },

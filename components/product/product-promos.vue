@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-fit !max-w-[calc(100vw-280px)] items-center gap-x-2">
+  <div class="flex h-fit !max-w-[980px] items-center gap-x-2">
     <UCarousel
       v-slot="{ item }"
       :items="promotions"

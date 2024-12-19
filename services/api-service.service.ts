@@ -95,12 +95,13 @@ export default class ApiService {
 
         // Valid server error or others
       } else if (err.response.data) {
+        // console.log(err.response);
         response = new ApiResponse({
-          // code: err.response.data.meta.statusCode,
+          code: err.response.status,
           message:
-            // err.response.data.error.message ??
+            err.response.data[0].message ??
             "Oops! An unknown error ocurred. Please try again.",
-          // status: err.response.data.statusMessage,
+          status: err.response.status,
           error: err.response.data,
         });
 

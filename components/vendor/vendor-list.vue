@@ -48,10 +48,7 @@
         hideButton
       />
 
-      <div
-        v-else
-        class="flex h-fit !max-w-[calc(100vw-300px)] items-center gap-x-2"
-      >
+      <div v-else class="flex h-fit !max-w-[980px] items-center gap-x-2">
         <UCarousel
           ref="foodProductsCarousel"
           v-slot="{ item }"
@@ -91,10 +88,7 @@
         hideButton
       />
 
-      <div
-        v-else
-        class="flex h-fit !max-w-[calc(100vw-300px)] items-center gap-x-2"
-      >
+      <div v-else class="flex h-fit !max-w-[980px] items-center gap-x-2">
         <UCarousel
           ref="foodProductsCarousel"
           v-slot="{ item }"
@@ -130,16 +124,13 @@
           </div>
         </UCard>
       </div>
-      <BaseEmptyList
+      <!-- <BaseEmptyList
         v-else-if="filteredVendors.length === 0"
         message="No vendor found"
         hideButton
-      />
+      /> -->
 
-      <div
-        v-else
-        class="flex h-fit !max-w-[calc(100vw-300px)] items-center gap-x-2"
-      >
+      <div v-else class="flex h-fit !max-w-[980px] items-center gap-x-2">
         <UCarousel
           ref="foodProductsCarousel"
           v-slot="{ item }"
@@ -176,10 +167,7 @@
         hideButton
       />
 
-      <div
-        v-else
-        class="flex h-fit !max-w-[calc(100vw-300px)] items-center gap-x-2"
-      >
+      <div v-else class="flex h-fit !max-w-[980px] items-center gap-x-2">
         <UCarousel
           v-slot="{ item, index }"
           :items="vendors"

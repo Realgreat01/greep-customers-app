@@ -12,6 +12,14 @@ export class AuthService {
       url: "/auth/user",
     });
   };
+
+  static getUserProfile = async (userId: string) => {
+    return await ApiService.run({
+      method: ApiService.GET,
+      url: `/users/users/${userId}`,
+    });
+  };
+
   static updateUserProfile = async (data: UserProfilePayload) => {
     return await ApiService.run({
       method: ApiService.PUT,

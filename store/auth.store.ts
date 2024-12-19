@@ -6,10 +6,11 @@ import ApiService from "~/services/api-service.service";
 import { AuthService } from "~/services/auth.service";
 
 import type { LoginPayload, UserProfilePayload } from "~/types/auth";
-import type { AuthUserEntity } from "~/types/user";
+import type { AuthUserEntity, UserEntity } from "~/types/user";
 
 interface UserAuth {
   User: AuthUserEntity | null;
+  UserProfile: UserEntity | null;
   IsLoggedIn: boolean;
 }
 
@@ -17,6 +18,7 @@ export const useAuthStore = defineStore("AuthStore", {
   state: (): UserAuth => {
     return {
       User: null,
+      UserProfile: null,
       IsLoggedIn: false,
     };
   },
@@ -24,6 +26,10 @@ export const useAuthStore = defineStore("AuthStore", {
   getters: {
     user(): UserAuth["User"] {
       return this.User;
+    },
+
+    userProfile(): UserAuth["UserProfile"] {
+      return this.UserProfile;
     },
 
     isLoggedIn(): boolean {
@@ -68,10 +74,27 @@ export const useAuthStore = defineStore("AuthStore", {
       }
     },
 
+    async getUserProfile(userId: string) {
+      const res = await AuthService.getUserProfile(userId);
+      if (res.success) {
+        this.UserProfile = res.data;
+      }
+    },
+
     async authUser() {
+      const toast = useToast();
       const res = await AuthService.currentUser();
       if (res.success) {
         this.User = res.data;
+        await this.getUserProfile(res.data.id);
+      } else {
+        if (res.code === 461) {
+          this.logout();
+          toast.add({
+            title: "Session expired, Kindly login !",
+            color: "red",
+          });
+        }
       }
     },
 
