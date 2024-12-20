@@ -94,7 +94,7 @@
                 v-for="[item, property] in Object.entries(addOnProperty.items)"
               >
                 <h2 class="first-letter:capitalize">{{ item }}</h2>
-                <siv class="flex gap-x-1">
+                <div class="flex gap-x-1">
                   <h2 class="">
                     +
                     {{
@@ -106,7 +106,7 @@
                   </h2>
 
                   <UCheckbox color="green" :ui="{ rounded: 'rounded-full' }" />
-                </siv>
+                </div>
               </div>
             </div>
           </div>

@@ -11,3 +11,5 @@ export interface WhatsAppMessage {
   location: string;
   notes?: string;
 }
+
+type Coordinates = [number, number];

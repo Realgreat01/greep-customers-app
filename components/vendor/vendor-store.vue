@@ -26,13 +26,6 @@
               : 'Greep Store'
           "
         />
-        <UButton
-          icon="i-icon-camera"
-          size="xl"
-          label="Message Store"
-          color="green"
-          :ui="{ rounded: 'rounded-full' }"
-        />
       </div>
 
       <div class="flex items-center justify-between">
@@ -59,15 +52,21 @@
             </span>
           </h2>
         </div>
-
-        <UInput
-          icon="i-icon-search-icon"
-          size="sm"
-          color="white"
-          :trailing="false"
-          :ui="{ rounded: 'rounded-3xl' }"
-          placeholder="Search Store"
-        />
+        <div class="flex gap-x-2">
+          <UIcon
+            name="i-icon-chat"
+            size="xl"
+            :ui="{ rounded: 'rounded-full' }"
+          />
+          <UInput
+            icon="i-icon-search-icon"
+            size="sm"
+            color="white"
+            :trailing="false"
+            :ui="{ rounded: 'rounded-3xl' }"
+            placeholder="Search Store"
+          />
+        </div>
       </div>
 
       <!-- <VendorStatus :schedule="selectedVendor?.vendor.schedule ?? null" /> -->

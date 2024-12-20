@@ -1,5 +1,6 @@
 <template>
-  <div class="-mt-5 bg-white p-5">
+  <div class="bg-white p-5">
+    <CarouselProductTags :productTags="productItemsTags" />
     <h2 class="mb-5 text-2xl font-semibold">All Stores</h2>
 
     <div
@@ -41,6 +42,7 @@
 
 <script setup lang="ts">
 import { GP_ROUTES } from "~/constants/routes";
+import { useInteractionStore } from "~/store/interactions.store";
 
 definePageMeta({
   name: GP_ROUTES.MARKET.VENDORS,
@@ -49,6 +51,7 @@ definePageMeta({
 import { useVendorStore } from "~/store/vendor.store";
 const searchedTerm = ref("");
 const { vendors, vendorLoadingStates } = storeToRefs(useVendorStore());
+const { productItemsTags } = storeToRefs(useInteractionStore());
 
 const filteredVendors = computed(() =>
   vendors.value.filter((vendor) =>

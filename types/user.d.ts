@@ -1,7 +1,4 @@
-interface Coordinates {
-  0: number;
-  1: number;
-}
+type Coordinates = [number, number];
 
 interface ImageDetails {
   name: string;

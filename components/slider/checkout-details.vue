@@ -69,7 +69,7 @@
           >
             {{
               gpNumbers.formatCurrency(
-                utilStore.getTotalProductCost([
+                paymentStore.getTotalProductCost([
                   ...selectedVendorCart.products.map((x) => ({
                     amount: x.product.price.amount * x.quantity,
                     currency: x.product.price.currency,
@@ -172,15 +172,16 @@ import { number, object, string, type InferType } from "yup";
 import { useGeolocation } from "@vueuse/core";
 import { Form as VeeForm } from "vee-validate";
 import type { OrderEntity } from "~/types/product";
-import { useUtilsStore } from "~/store/utils.store";
 import { useProductStore } from "~/store/product.store";
+import { usePaymentStore } from "~/store/payment.store";
+
 const emit = defineEmits(["close", "completed"]);
 
 const OrderForm = ref<any>();
 const errors = ref<{ location: any }>({ location: undefined });
 const { selectedVendorCart, orderInfo, Cart } = storeToRefs(useProductStore());
 const productStore = useProductStore();
-const utilStore = useUtilsStore();
+const paymentStore = usePaymentStore();
 const loadingLocation = ref(false);
 
 const schema = object({
@@ -250,7 +251,7 @@ async function checkOutOrder(field: any) {
           selectedVendorCart?.value?.products !== null &&
           selectedVendorCart?.value !== null
             ? gpNumbers.formatCurrency(
-                utilStore.getTotalProductCost([
+                paymentStore.getTotalProductCost([
                   ...selectedVendorCart.value.products.map((x) => ({
                     amount: x.product.price.amount * x.quantity,
                     currency: x.product.price.currency,

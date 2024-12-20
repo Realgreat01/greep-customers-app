@@ -1,16 +1,11 @@
 <template>
-  <UButton
-    label="open"
-    variant="outline"
-    icon="i-icon-blank-dot"
-    :class="
-      isStoreOpen(schedule)
-        ? 'fill-green-500 text-green-500'
-        : 'fill-red-500 text-red-500'
-    "
-    class="flex items-center font-semibold ring-gray-200"
-    >{{ isStoreOpen(schedule) ? "Open" : "Closed" }}</UButton
+  <div
+    :class="isStoreOpen(schedule) ? 'text-green-500' : 'text-gray-500'"
+    class="flex items-center gap-x-1 text-xs font-medium ring-gray-200"
   >
+    <UIcon name="i-icon-blank-dot" class="h-4 w-4" />
+    {{ isStoreOpen(schedule) ? "Open" : "Closed" }}
+  </div>
 </template>
 
 <script setup lang="ts">

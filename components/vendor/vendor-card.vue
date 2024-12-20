@@ -23,9 +23,15 @@
         :name="vendor.publicName !== '' ? vendor.publicName : 'Greep Store'"
       />
       <UDivider class="" />
-
       <div class="flex justify-between text-xs text-gray-400">
-        <h2 class="">Starts from</h2>
+        <h2 class="" v-if="isLoggedIn && userProfile">
+          {{
+            calculateDistance(
+              vendor.type.location.coords,
+              userProfile.type.location.coords,
+            )
+          }}
+        </h2>
 
         <h2
           class="flex items-center gap-x-2"
@@ -34,7 +40,7 @@
           <UIcon name="i-icon-time" class="h-4 w-4" />
 
           {{ vendor.vendor.averagePrepTimeInMins.from }}
-          —— {{ vendor.vendor.averagePrepTimeInMins.from }} mins
+          — {{ vendor.vendor.averagePrepTimeInMins.from }} mins
         </h2>
       </div>
     </div>
@@ -43,6 +49,7 @@
 
 <script setup lang="ts">
 import { GP_ROUTES } from "~/constants/routes";
+import { useAuthStore } from "~/store/auth.store";
 import { useVendorStore } from "~/store/vendor.store";
 import type { UserEntity } from "~/types/user";
 
@@ -54,6 +61,8 @@ const props = defineProps({
 });
 
 const router = useRouter();
+
+const { isLoggedIn, userProfile } = storeToRefs(useAuthStore());
 
 const { SelectedVendor } = storeToRefs(useVendorStore());
 

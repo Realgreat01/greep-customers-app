@@ -111,9 +111,7 @@ defineProps({
   },
 });
 
-const toast = useToast();
-const { selectedVendorCart, SelectedVendorCart, Cart } =
-  storeToRefs(useProductStore());
+const { selectedVendorCart } = storeToRefs(useProductStore());
 const productStore = useProductStore();
 const emit = defineEmits(["openCheckoutModal", "openFullCartsModal", "close"]);
 const openCheckoutModal = (cart: VendorCartEntity) => {
@@ -122,9 +120,7 @@ const openCheckoutModal = (cart: VendorCartEntity) => {
 };
 
 const removeItemFromCart = (productId: string, productIndex: number) => {
-  SelectedVendorCart?.value?.products.splice(productIndex, 1);
-  Cart.value = Cart.value.filter((cart) => cart.productId !== productId);
-  toast.add({ title: "Product removed successfully!", color: "red" });
+  productStore.removeItemFromCart(productId, productIndex);
   if (selectedVendorCart.value?.products.length === 0) {
     emit("close");
   }

@@ -10,6 +10,17 @@ export class VendorService {
       },
     });
   };
+
+  static getFoodVendors = async () => {
+    return await ApiService.run({
+      method: ApiService.GET,
+      url: "/users/users",
+      params: {
+        where: JSON.stringify([{ field: "type.vendorType", value: "foods" }]),
+      },
+    });
+  };
+
   static getMarketVendors = async () => {
     return await ApiService.run({
       method: ApiService.GET,
@@ -20,12 +31,26 @@ export class VendorService {
     });
   };
 
-  static getFoodVendors = async () => {
+  static getNearByFoodVendors = async () => {
     return await ApiService.run({
       method: ApiService.GET,
+      // url: "/users/my/vendors",
       url: "/users/users",
       params: {
-        where: JSON.stringify([{ field: "type.vendorType", value: "food" }]),
+        where: JSON.stringify([{ field: "type.vendorType", value: "foods" }]),
+        nearby: true,
+      },
+    });
+  };
+
+  static getNearByMarketVendors = async () => {
+    return await ApiService.run({
+      method: ApiService.GET,
+      // url: "/users/my/vendors",
+      url: "/users/users",
+      params: {
+        where: JSON.stringify([{ field: "type.vendorType", value: "items" }]),
+        nearby: true,
       },
     });
   };

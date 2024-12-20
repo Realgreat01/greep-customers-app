@@ -8,4 +8,24 @@ export class InteractionService {
       url: "/interactions/tags",
     });
   };
+
+  static getProductFoodsTags = async () => {
+    return await ApiService.run({
+      method: ApiService.GET,
+      url: "/interactions/tags",
+      params: {
+        where: JSON.stringify([{ field: "type", value: "productsFoods" }]),
+      },
+    });
+  };
+
+  static getProductItemsTags = async () => {
+    return await ApiService.run({
+      method: ApiService.GET,
+      url: "/interactions/tags",
+      params: {
+        where: JSON.stringify([{ field: "type", value: "productsItems" }]),
+      },
+    });
+  };
 }

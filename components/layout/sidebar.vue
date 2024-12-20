@@ -2,13 +2,13 @@
   <div class="flex flex-col bg-white">
     <NuxtLink
       :to="{ name: GP_ROUTES.DASHBOARD.HOME }"
-      class="flex-center flex h-[76px] w-full border-b border-r text-center"
+      class="flex-center flex h-[60px] w-full border-b border-r text-center"
     >
       <img src="/logo/greep-full.svg" alt="" />
     </NuxtLink>
 
     <div
-      class="flex h-[calc(100vh-76px)] max-h-[800px] flex-col gap-2.5 rounded-lg border-r p-4"
+      class="flex h-[calc(100vh-76px)] max-h-[800px] flex-col gap-2.5 border-r p-4"
     >
       <NuxtLink
         class="flex cursor-pointer items-center gap-x-2 p-2"

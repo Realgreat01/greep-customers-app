@@ -74,10 +74,12 @@ export default class ApiService {
     let response;
     try {
       const serverResponse = await ApiService.http(request);
+      console.log(serverResponse.data);
       response = new ApiResponse({
         // status: serverResponse.data.meta.status,
         // code: serverResponse.data.meta.code,
         success: true,
+
         // message: serverResponse.data.message,
         data: serverResponse.data.data ?? serverResponse.data,
         // meta: serverResponse.data.meta,

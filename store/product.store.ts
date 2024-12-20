@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import TypedStorage from "typed-local-store";
 import { ProductService } from "~/services/product.service";
 import { VendorService } from "~/services/vendor.service";
 import type {
@@ -8,8 +9,11 @@ import type {
   VendorCartEntity,
   TagEntity,
 } from "~/types/product";
-import type { UserEntity, Vendor } from "~/types/user";
 import { useInteractionStore } from "./interactions.store";
+import { useStorage } from "@vueuse/core";
+
+const cartStorage = useStorage<{ Cart: CartEntity[] }>("Cart", { Cart: [] });
+const toast = useToast();
 
 interface ProductStore {
   Products: ProductEntity[];
@@ -18,7 +22,6 @@ interface ProductStore {
   LatestProducts: ProductEntity[];
   ProductsByTag: { tag: TagEntity; products: ProductEntity[] } | null;
   VendorProducts: ProductEntity[];
-  Cart: CartEntity[];
   SelectedVendorCart: VendorCartEntity | null;
   productLoadingStates: {
     loadingProducts: boolean;
@@ -38,7 +41,6 @@ export const useProductStore = defineStore("ProductStore", {
       LatestProducts: [],
       ProductsByTag: null,
       VendorProducts: [],
-      Cart: [],
       SelectedVendorCart: null,
       OrderInfo: {
         apartmentName: undefined,
@@ -84,8 +86,8 @@ export const useProductStore = defineStore("ProductStore", {
       return state.VendorProducts;
     },
 
-    cart(state: ProductStore): ProductStore["Cart"] {
-      return state.Cart;
+    cart(): CartEntity[] {
+      return cartStorage.value.Cart;
     },
 
     selectedVendorCart(
@@ -164,18 +166,38 @@ export const useProductStore = defineStore("ProductStore", {
 
     addToCart(product: ProductEntity, quantity: number = 1) {
       const { user } = product;
-      this.Cart.push({
-        productId: product.id,
-        product,
-        vendorId: user.id,
-        vendor: user,
-        quantity,
-      });
-      localStorage.setItem("Cart", JSON.stringify(this.Cart));
+      if (this.cart.some((cart) => cart.productId === product.id)) return;
+      else {
+        const item = {
+          productId: product.id,
+          product,
+          vendorId: user.id,
+          vendor: user,
+          quantity,
+        };
+
+        cartStorage.value.Cart = [...cartStorage.value.Cart, item];
+      }
+    },
+
+    removeItemFromCart(productId: string, productIndex: number) {
+      this.SelectedVendorCart?.products.splice(productIndex, 1);
+      cartStorage.value.Cart = cartStorage.value.Cart.filter(
+        (cart) => cart.productId !== productId,
+      );
+      toast.add({ title: "Product removed successfully!", color: "red" });
     },
 
     selectVendorCart(cart: VendorCartEntity) {
       this.SelectedVendorCart = cart;
+    },
+
+    deleteVendorCart(vendorId: string) {
+      const cart = cartStorage.value.Cart.filter(
+        (cart) => cart.vendorId !== vendorId,
+      );
+      cartStorage.value.Cart = cart;
+      toast.add({ title: "Vendor carts deleted successfully!", color: "red" });
     },
 
     setOrderInfo(orderInfo: OrderEntity) {

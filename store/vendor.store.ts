@@ -4,6 +4,11 @@ import type { UserEntity, Vendor } from "~/types/user";
 
 interface VendorStore {
   Vendors: UserEntity[];
+  FoodVendors: UserEntity[];
+  MarketVendors: UserEntity[];
+  NearByFoodVendors: UserEntity[];
+  NearByMarketVendors: UserEntity[];
+
   SelectedVendor: UserEntity | null;
   vendorLoadingStates: {
     loadingVendors: boolean;
@@ -14,6 +19,10 @@ export const useVendorStore = defineStore("VendorStore", {
   state: (): VendorStore => {
     return {
       Vendors: [],
+      FoodVendors: [],
+      MarketVendors: [],
+      NearByFoodVendors: [],
+      NearByMarketVendors: [],
       SelectedVendor: null,
       vendorLoadingStates: {
         loadingVendors: false,
@@ -24,6 +33,18 @@ export const useVendorStore = defineStore("VendorStore", {
   getters: {
     vendors(state: VendorStore): VendorStore["Vendors"] {
       return state.Vendors;
+    },
+    foodVendors(state: VendorStore): VendorStore["Vendors"] {
+      return state.FoodVendors;
+    },
+    nearbyFoodVendors(state: VendorStore): VendorStore["Vendors"] {
+      return state.NearByFoodVendors;
+    },
+    marketVendors(state: VendorStore): VendorStore["Vendors"] {
+      return state.MarketVendors;
+    },
+    nearbyMarketVendors(state: VendorStore): VendorStore["Vendors"] {
+      return state.NearByMarketVendors;
     },
 
     selectedVendor(state: VendorStore): VendorStore["SelectedVendor"] {
@@ -36,6 +57,34 @@ export const useVendorStore = defineStore("VendorStore", {
       this.vendorLoadingStates.loadingVendors = true;
       const res = await VendorService.getVendors();
       this.Vendors = res.data.results;
+      this.vendorLoadingStates.loadingVendors = false;
+    },
+
+    async getMarketVendors() {
+      this.vendorLoadingStates.loadingVendors = true;
+      const res = await VendorService.getMarketVendors();
+      this.MarketVendors = res.data.results;
+      this.vendorLoadingStates.loadingVendors = false;
+    },
+
+    async getFoodVendors() {
+      this.vendorLoadingStates.loadingVendors = true;
+      const res = await VendorService.getFoodVendors();
+      this.FoodVendors = res.data.results;
+      this.vendorLoadingStates.loadingVendors = false;
+    },
+
+    async getNearByFoodVendors() {
+      this.vendorLoadingStates.loadingVendors = true;
+      const res = await VendorService.getNearByFoodVendors();
+      this.NearByFoodVendors = res.data.results;
+      this.vendorLoadingStates.loadingVendors = false;
+    },
+
+    async getNearByMarketVendors() {
+      this.vendorLoadingStates.loadingVendors = true;
+      const res = await VendorService.getNearByMarketVendors();
+      this.NearByMarketVendors = res.data.results;
       this.vendorLoadingStates.loadingVendors = false;
     },
 

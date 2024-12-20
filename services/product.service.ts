@@ -13,6 +13,21 @@ export class ProductService {
     });
   };
 
+  static getFoodProducts = async (params?: any) => {
+    return await ApiService.run({
+      method: ApiService.GET,
+      url: "/marketplace/products",
+      params: {
+        where: JSON.stringify([
+          { field: "data.type", value: "foods" },
+          { field: "inStock", value: true },
+        ]),
+        whereType: "and",
+        ...params,
+      },
+    });
+  };
+
   static getMostSoldProducts = async (params?: any) => {
     return await ApiService.run({
       method: ApiService.GET,

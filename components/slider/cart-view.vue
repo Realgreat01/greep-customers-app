@@ -140,8 +140,7 @@ const openFullCartModal = (cart: VendorCartEntity) => {
 };
 
 const deleteVendorCart = (vendorId: string) => {
-  Cart.value = Cart.value.filter((cart) => cart.vendorId !== vendorId);
-  toast.add({ title: "Vendor carts deleted successfully!", color: "red" });
+  productStore.deleteVendorCart(vendorId);
 };
 </script>
 

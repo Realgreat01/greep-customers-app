@@ -39,8 +39,11 @@ export const gpDates = {
     }
   },
 
-  getVendorSchedule(schedule: Vendor["schedule"]) {
-    if (!schedule) return "Closed";
+  getVendorSchedule(
+    schedule: Vendor["schedule"],
+    type: "day" | "time" = "time",
+  ) {
+    if (!schedule) return " Closed";
     else {
       const daysOfWeek = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
       const currentDay = new Date()
@@ -49,11 +52,11 @@ export const gpDates = {
           weekday: "short",
         })
         .toLowerCase();
-      const todaySchedule = schedule.schedule[currentDay];
 
-      if (!todaySchedule) {
-        return "Closed";
-      }
+      const todaySchedule: VendorSchedule | null =
+        schedule.schedule[currentDay];
+
+      if (!todaySchedule) return "Closed";
 
       const { from, to } = todaySchedule;
       const formatTime = ({ hr, min }) => {
@@ -62,7 +65,9 @@ export const gpDates = {
         return `${formattedHr}${period}`;
       };
 
-      return `${formatTime(from)} - ${formatTime(to)}`;
+      return type === "time"
+        ? `${formatTime(from)} - ${formatTime(to)}`
+        : `Opens <span class="capitalize">${currentDay}</span> at <span class="uppercase">${formatTime(from)}</span>`;
     }
   },
 

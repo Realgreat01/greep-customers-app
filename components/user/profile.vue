@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8" v-if="isLoggedIn">
+  <div class="max-w-[600px] p-8" v-if="isLoggedIn">
     <UChip
       size="xl"
       position="bottom-right"
