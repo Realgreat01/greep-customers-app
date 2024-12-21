@@ -39,7 +39,7 @@
       <UPopover v-model:open="openPopup">
         <UAvatar
           size="lg"
-          class="bg-blue-500"
+          class="bg-primary-500"
           :src="user?.photo?.link"
           :alt="user?.allNames?.full ?? 'John Doe'"
           @click="goToLogin"

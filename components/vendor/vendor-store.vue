@@ -1,19 +1,19 @@
 <template>
-  <div class="flex flex-col px-4">
+  <div class="flex max-w-[calc(100vw-260px)] flex-col py-5">
     <UButton
       icon="i-icon-arrow-left"
       label="Back"
       variant="outline"
       color="gray"
       :ui="{ rounded: 'rounded-3xl' }"
-      class="flex w-fit items-center text-black ring-gray-500"
+      class="ml-5 flex w-fit items-center text-black ring-gray-500"
       @click="router.push({ name: GP_ROUTES.DASHBOARD.HOME })"
     />
 
-    <div v-if="selectedVendor" class="mx-auto my-5 flex w-full flex-col gap-4">
+    <div v-if="selectedVendor" class="mx-auto flex w-full flex-col gap-4 p-5">
       <img
         :alt="selectedVendor.publicName"
-        class="h-[237px] w-full rounded-xl object-cover object-[40%]"
+        class="h-[237px] w-full rounded-xl object-cover"
         :src="selectedVendor?.bio?.photo?.link ?? '/blank.png'"
       />
 
@@ -52,15 +52,19 @@
             </span>
           </h2>
         </div>
-        <div class="flex gap-x-2">
-          <UIcon
-            name="i-icon-chat"
+        <div class="flex items-center gap-x-2">
+          <UButton
+            square
+            icon="i-icon-chat"
             size="xl"
+            variant="soft"
+            color="green"
+            class="p-2"
             :ui="{ rounded: 'rounded-full' }"
           />
           <UInput
             icon="i-icon-search-icon"
-            size="sm"
+            size="lg"
             color="white"
             :trailing="false"
             :ui="{ rounded: 'rounded-3xl' }"
@@ -68,29 +72,56 @@
           />
         </div>
       </div>
-
-      <!-- <VendorStatus :schedule="selectedVendor?.vendor.schedule ?? null" /> -->
     </div>
 
-    <div class="py-2">
+    <div class="p-5">
       <h2 class="text-xl font-semibold">Reviews and Rating</h2>
+      <div class="my-2 flex items-center gap-x-1 font-medium">
+        <span class="">
+          {{ gpNumbers.formatNumber(totalRating / reviews.length) }}</span
+        >
+        <UIcon class="h-4 w-4" name="i-icon-star" />
+        <span class="text-sm text-gray-400"> ({{ totalRating }})</span>
+      </div>
       <div class="flex w-full items-center gap-x-3">
-        <UCard class="h-[236px] w-96">
-          <div class="flex min-h-[180px] w-full flex-col justify-between gap-2">
-            <UMeter
-              color="green"
-              size="lg"
-              block
-              :value="i * 10 + 40"
-              v-for="i in 5"
-            />
+        <UCard class="h-[236px] w-[480px]">
+          <div
+            class="flex min-h-[180px] w-full flex-col-reverse justify-between gap-2"
+          >
+            <div class="flex items-center gap-x-2" v-for="rating in ratingData">
+              <UMeter
+                color="green"
+                size="xl"
+                block
+                class="w-3/5"
+                :ui="{
+                  meter: {
+                    background: 'bg-[#4D4D4D] ',
+                    color: 'text-[#10BB76] ',
+                  },
+                }"
+                :value="rating.value"
+              />
+              <div class="flex items-center">
+                <UIcon
+                  class="h-5 w-5"
+                  :name="
+                    i <= rating.rating ? 'i-icon-star' : 'i-icon-star-outline'
+                  "
+                  v-for="i in 5"
+                />
+              </div>
+              <h2 class="w-12 whitespace-nowrap text-sm font-medium">
+                {{ rating.percentage }}
+              </h2>
+            </div>
           </div>
         </UCard>
 
         <div
-          class="hide-scrollbar flex flex-1 items-center gap-x-2 overflow-scroll p-1"
+          class="hide-scrollbar flex flex-1 items-center gap-x-4 overflow-scroll p-1"
         >
-          <UCard class="h-[240px] min-w-96" v-for="item in reviews">
+          <UCard class="h-[240px] min-w-96 bg-gray-50" v-for="item in reviews">
             <h2 class="font-semibold">
               {{ item.user }}
               <span class="ml-2 text-xs font-normal text-gray-400">
@@ -103,45 +134,17 @@
         </div>
       </div>
     </div>
-    <div class="py-5 lg:py-10">
-      <div
-        v-if="productLoadingStates.loadingProducts"
-        class="mx-auto flex flex-wrap justify-center gap-5 py-10 lg:justify-start"
-      >
-        <UCard
-          v-for="i in 12"
-          class="w-80 p-0"
-          :ui="{
-            base: 'overflow-hidden grid gap-2',
-            body: {
-              padding: 'px-0 py-0 sm:p-0',
-            },
-          }"
-        >
-          <USkeleton class="h-40 w-full" />
-          <div class="grid gap-2 p-2">
-            <USkeleton class="h-6 w-32 font-bold" />
-            <USkeleton class="h-16 text-sm" />
 
-            <UDivider class="" />
+    <div class="bg-[#0092600D] p-5">
+      <CarouselProducts :products="vendorProducts" title="Top Meals" />
+    </div>
 
-            <USkeleton class="h-6 w-28 font-bold" />
-
-            <div class="flex items-center justify-between">
-              <div class="flex items-center justify-center gap-8">
-                <USkeleton v-for="i in 2" class="flex h-6 w-6" />
-              </div>
-              <USkeleton class="h-6 w-32" />
-            </div>
-          </div>
-        </UCard>
-      </div>
-      <BaseEmptyList v-else-if="vendorProducts.length === 0" />
-      <div
-        v-else
-        class="mx-auto flex flex-wrap justify-center gap-1 gap-y-5 py-10 lg:justify-start"
-      >
-        <ProductCard v-for="product in vendorProducts" :product />
+    <div class="grid gap-1 p-5">
+      <h2 class="mb-2 flex items-center gap-x-2 text-xl font-semibold">
+        <UIcon name="i-icon-landmark hidden" />Our Menu
+      </h2>
+      <div class="flex flex-wrap gap-4">
+        <ProductCard :product="product" v-for="product in vendorProducts" />
       </div>
     </div>
   </div>
@@ -185,6 +188,20 @@ const reviews = ref([
       "It was okay, but there’s room for improvement. While the service was decent, I felt there were some noticeable gaps in communication and timing. The staff seemed a bit rushed, which impacted the overall experience. With a few tweaks, this could be a top-tier service.",
   },
   {
+    user: "Michael Perez",
+    rating: 3,
+    time: "2024-12-13T08:15:30.456Z",
+    review:
+      "It was okay, but there’s room for improvement. While the service was decent, I felt there were some noticeable gaps in communication and timing. The staff seemed a bit rushed, which impacted the overall experience. With a few tweaks, this could be a top-tier service.",
+  },
+  {
+    user: "Michael Perez",
+    rating: 3,
+    time: "2024-12-13T08:15:30.456Z",
+    review:
+      "It was okay, but there’s room for improvement. While the service was decent, I felt there were some noticeable gaps in communication and timing. The staff seemed a bit rushed, which impacted the overall experience. With a few tweaks, this could be a top-tier service.",
+  },
+  {
     user: "Sophia White",
     rating: 2,
     time: "2024-12-08T17:42:10.789Z",
@@ -198,7 +215,94 @@ const reviews = ref([
     review:
       "Excellent service! From the moment I arrived, everything was handled with utmost professionalism. The staff were knowledgeable, courteous, and went above and beyond to ensure my satisfaction. I would highly recommend this service to anyone looking for a seamless and pleasant experience.",
   },
+  {
+    user: "Olivia Martin",
+    rating: 1,
+    time: "2024-12-05T12:50:00.123Z",
+    review:
+      "Terrible experience. The staff were unhelpful, and the entire process was a nightmare. I wouldn’t recommend this service to anyone. It was a complete waste of time and money.",
+  },
+  {
+    user: "Olivia Martin",
+    rating: 1,
+    time: "2024-12-05T12:50:00.123Z",
+    review:
+      "Terrible experience. The staff were unhelpful, and the entire process was a nightmare. I wouldn’t recommend this service to anyone. It was a complete waste of time and money.",
+  },
+  {
+    user: "Olivia Martin",
+    rating: 1,
+    time: "2024-12-05T12:50:00.123Z",
+    review:
+      "Terrible experience. The staff were unhelpful, and the entire process was a nightmare. I wouldn’t recommend this service to anyone. It was a complete waste of time and money.",
+  },
+  {
+    user: "Olivia Martin",
+    rating: 1,
+    time: "2024-12-05T12:50:00.123Z",
+    review:
+      "Terrible experience. The staff were unhelpful, and the entire process was a nightmare. I wouldn’t recommend this service to anyone. It was a complete waste of time and money.",
+  },
+  {
+    user: "Olivia Martin",
+    rating: 1,
+    time: "2024-12-05T12:50:00.123Z",
+    review:
+      "Terrible experience. The staff were unhelpful, and the entire process was a nightmare. I wouldn’t recommend this service to anyone. It was a complete waste of time and money.",
+  },
+  {
+    user: "James Taylor",
+    rating: 4,
+    time: "2024-12-10T16:25:40.456Z",
+    review:
+      "Good service overall, but there’s room for improvement. The staff were helpful, and most things went smoothly. However, there were a few minor issues with the timing, which could have been better managed.",
+  },
+  {
+    user: "Isabella Moore",
+    rating: 5,
+    time: "2024-12-09T15:30:15.789Z",
+    review:
+      "Fantastic experience! Everything went better than expected. The staff were attentive and ensured everything was perfect. I’ll definitely be using this service again in the future.",
+  },
+  {
+    user: "William Brown",
+    rating: 3,
+    time: "2024-12-06T14:15:20.678Z",
+    review:
+      "An average experience. There were some good moments, but there’s still a lot of room for improvement. The staff tried their best, but the overall execution left much to be desired.",
+  },
+  {
+    user: "Mia Wilson",
+    rating: 5,
+    time: "2024-12-11T19:20:05.890Z",
+    review:
+      "An exceptional experience! Everything was perfect from start to finish. The service was fast, the staff were extremely helpful, and I couldn’t be happier. I highly recommend this to everyone.",
+  },
 ]);
+
+const ratingData = computed(() => {
+  const ratingSummary = reviews.value.reduce<Record<number, number>>(
+    (acc, review) => {
+      acc[review.rating] = (acc[review.rating] || 0) + 1;
+      return acc;
+    },
+    {},
+  );
+
+  return Object.entries(ratingSummary).map(([rating, count]) => ({
+    rating: Number(rating),
+    count,
+    value: (count / reviews.value.length) * 100,
+    percentage: gpNumbers.getPercentage(count, reviews.value.length),
+  }));
+});
+
+const totalRating = computed(() => {
+  return reviews.value.reduce((acc, review) => {
+    acc = review.rating + acc;
+    return acc;
+  }, 0);
+});
 
 onBeforeMount(async () => {
   await productStore.getVendorProducts(route.params.id as string);

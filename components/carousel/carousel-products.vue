@@ -1,40 +1,43 @@
 <template>
-  <h2 class="mb-5 text-2xl font-semibold">
-    {{ title }} &nbsp;
-    <UIcon name="i-icon-arrow-right" class="h-5 w-5" />
-  </h2>
+  <div class="">
+    <h2 class="mb-1 text-xl font-semibold">
+      {{ title }}&nbsp;
+      <UIcon name="i-icon-arrow-right" class="h-5 w-5" />
+    </h2>
 
-  <div
-    v-if="productLoadingStates.loadingProducts === true"
-    class="flex flex-wrap justify-center gap-2 lg:justify-start"
-  >
-    <UCard class="grid w-[280px] gap-4" v-for="i in 3">
-      <USkeleton class="h-32 w-full" />
-      <USkeleton class="my-2 h-4 w-[80%]" />
-      <div class="flex items-center justify-between">
-        <USkeleton class="h-4 w-20" v-for="i in 2" />
-      </div>
-    </UCard>
-  </div>
-  <BaseEmptyList
-    v-else-if="filteredVendors.length === 0"
-    message="No vendor found"
-    hideButton
-  />
-
-  <div v-else class="flex h-fit !max-w-[980px] items-center gap-x-2">
-    <UCarousel
-      ref="productsCarousel"
-      v-slot="{ item }"
-      :items="products"
-      class="mx-auto w-[100%] rounded-lg"
-      :ui="{
-        item: 'mx-2.5',
-        container: 'rounded-lg',
-      }"
+    <div
+      v-if="productLoadingStates.loadingProducts === true"
+      class="flex flex-wrap justify-center gap-2 lg:justify-start"
     >
-      <ProductCard :product="item" />
-    </UCarousel>
+      <UCard class="grid w-[280px] gap-4" v-for="i in 3">
+        <USkeleton class="h-32 w-full" />
+        <USkeleton class="my-2 h-4 w-[80%]" />
+        <div class="flex items-center justify-between">
+          <USkeleton class="h-4 w-20" v-for="i in 2" />
+        </div>
+      </UCard>
+    </div>
+    <BaseEmptyList
+      v-else-if="filteredVendors.length === 0"
+      message="No vendor found"
+      hideButton
+    />
+
+    <div class="h-fit !max-w-[calc(100vw-300px)]">
+      <UCarousel
+        class="rounded-lg"
+        :ui="{
+          item: 'mr-4',
+          container:
+            'relative w-full flex py-2  overflow-x-scroll  snap-x snap-mandatory scroll-smooth',
+        }"
+        ref="productsCarousel"
+        v-slot="{ item }"
+        :items="products"
+      >
+        <ProductCard :product="item" />
+      </UCarousel>
+    </div>
   </div>
 </template>
 

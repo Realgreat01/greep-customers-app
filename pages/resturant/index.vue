@@ -1,48 +1,33 @@
 <template>
-  <div class="grid gap-5 bg-white p-5">
-    <CarouselProductTags :productTags="productFoodsTags" />
-
-    <h2 class="mb-5 text-2xl font-semibold">Resturant Nearby</h2>
-
-    <div class="flex flex-wrap gap-4">
-      <VendorNearby :vendor="vendor" v-for="vendor in nearbyFoodVendors" />
+  <div class="grid gap-10 bg-white p-5">
+    <div class="mx-auto mt-3 w-[94%]">
+      <UInput
+        icon="i-icon-search-icon"
+        size="xl"
+        class="flex-1"
+        color="white"
+        :trailing="false"
+        :ui="{ rounded: 'rounded-full' }"
+        v-model="searchedTerm"
+        placeholder="Search"
+      />
     </div>
-    <h2 class="mb-5 text-2xl font-semibold">All Stores</h2>
 
-    <div
-      v-if="vendorLoadingStates.loadingVendors === true"
-      class="flex flex-wrap justify-center gap-2 lg:justify-start"
-    >
-      <UCard class="grid w-[280px] gap-4" v-for="i in 3">
-        <USkeleton class="h-32 w-full" />
-        <USkeleton class="my-2 h-4 w-[80%]" />
-        <div class="flex items-center justify-between">
-          <USkeleton class="h-4 w-20" v-for="i in 2" />
-        </div>
-      </UCard>
+    <div class="grid gap-1">
+      <h2 class="text-xl font-semibold">Resturants</h2>
+      <CarouselProductTags :productTags="productFoodsTags" />
     </div>
-    <BaseEmptyList
-      v-else-if="filteredVendors.length === 0"
-      message="No vendor found"
-      hideButton
-    />
 
-    <div
-      v-else
-      class="flex h-fit !max-w-[calc(100vw-300px)] items-center gap-x-2"
-    >
-      <UCarousel
-        v-slot="{ item, index }"
-        :items="vendors"
-        class="mx-auto w-[95%] rounded-lg"
-        :ui="{
-          item: 'mx-2.5',
-          container: 'rounded-lg',
-        }"
-      >
-        <VendorCard :vendor="item" />
-      </UCarousel>
+    <div class="grid gap-1">
+      <h2 class="mb-2 flex items-center gap-x-2 text-xl font-semibold">
+        <UIcon name="i-icon-landmark" />Resturants near you
+      </h2>
+      <div class="flex flex-wrap gap-4">
+        <VendorNearby :vendor="vendor" v-for="vendor in nearbyFoodVendors" />
+      </div>
     </div>
+
+    <CarouselVendors :vendors="vendors" title="All Resturants" />
   </div>
 </template>
 
@@ -59,6 +44,7 @@ const searchedTerm = ref("");
 const { vendors, nearbyFoodVendors, vendorLoadingStates } =
   storeToRefs(useVendorStore());
 const { productFoodsTags } = storeToRefs(useInteractionStore());
+
 const filteredVendors = computed(() =>
   vendors.value.filter((vendor) =>
     vendor.publicName.toLowerCase().includes(searchedTerm.value.toLowerCase()),

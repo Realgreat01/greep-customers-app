@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <h2 class="mb-5 text-2xl font-semibold">{{ title }}</h2>
+    <h2 class="text-xl font-semibold">{{ title }}</h2>
 
     <div
       v-if="productLoadingStates.loadingProducts === true"
@@ -20,16 +20,17 @@
       hideButton
     />
 
-    <div v-else class="flex h-fit !max-w-[980px] items-center gap-x-2">
+    <div class="h-fit !max-w-[calc(100vw-300px)]">
       <UCarousel
+        class="rounded-lg"
+        :ui="{
+          item: 'mr-4',
+          container:
+            'relative w-full py-2 flex overflow-x-scroll  snap-x snap-mandatory scroll-smooth',
+        }"
         v-slot="{ item, index }"
         ref="vendorsCarousel"
         :items="vendors"
-        class="mx-auto w-[95%] rounded-lg"
-        :ui="{
-          item: 'mx-2.5',
-          container: 'rounded-lg',
-        }"
       >
         <VendorCard :vendor="item" />
       </UCarousel>

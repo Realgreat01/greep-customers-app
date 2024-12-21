@@ -1,28 +1,43 @@
 <template>
   <UCard
     @click="selectProduct"
-    class="w-80 p-0"
+    :class="{
+      'w-[300px]': product.data.type === 'foods',
+      'w-[200px]': product.data.type === 'items',
+    }"
     :ui="{
       base: 'overflow-hidden grid gap-2',
       body: {
-        padding: 'px-4 py-3 sm:p-4',
+        padding:
+          product.data.type === 'foods'
+            ? 'px-4 py-3 sm:p-3'
+            : 'px-0 py-0  sm:p-2',
       },
     }"
   >
     <img
       :src="product?.banner.link ?? '/blank.png'"
       alt=""
+      :class="{
+        'rounded-lg': product.data.type === 'items',
+      }"
       class="mb-2 block h-40 w-full rounded-t-lg object-cover object-[50%]"
     />
-    <div class="grid gap-2">
-      <h2 class="font-bold">{{ product?.title }}</h2>
-      <UDivider class="" />
+    <div
+      class="grid gap-2"
+      :class="{
+        'p-2': product.data.type === 'items',
+      }"
+    >
+      <h2 class="font-semibold">{{ product?.title }}</h2>
+      <!-- <UDivider class="" /> -->
 
       <div class="flex justify-between text-xs text-gray-400">
         <h2 class="">
-          Starts from
-          <span class="font-medium">
-            &nbsp;
+          <span class="" v-if="product.data.type === 'foods'"
+            >Starts from
+          </span>
+          <span class="font-semibold text-gray-500">
             {{
               gpNumbers.formatCurrency(
                 product?.price.amount,

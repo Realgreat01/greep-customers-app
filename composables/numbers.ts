@@ -1,4 +1,13 @@
 export const gpNumbers = {
+  formatNumber(value: number) {
+    const formatter = new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+
+    return formatter.format(value); // Formats the result as a percentage
+  },
+
   formatCurrency(value: number, currency = "TRY") {
     let formattedNumber = Number(value);
 
@@ -20,6 +29,18 @@ export const gpNumbers = {
     } else {
       return formatter.format(formattedNumber);
     }
+  },
+
+  getPercentage(part: number, total: number) {
+    const formatter = new Intl.NumberFormat("en-US", {
+      style: "percent",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+
+    if (total === 0) return "0%";
+    const percentage = part / total;
+    return formatter.format(percentage); // Formats the result as a percentage
   },
 
   convertCurrencyToNumber(value: string | number) {

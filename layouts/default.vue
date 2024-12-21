@@ -1,26 +1,18 @@
 <template>
-  <UContainer
-    class="hide-scrollbar relative flex"
-    :ui="{
-      base: 'mx-auto max-w-[1440px] overflow-scroll hide-scrollbar',
-      padding: 'px-0 sm:px-0 lg:px-0',
-      constrained: 'max-w-[1440px]',
-    }"
-  >
+  <div class="hide-scrollbar relative flex">
     <LayoutSidebar
       class="sticky top-0 hidden !w-[257px] !min-w-[257px] !max-w-[257px] md:flex"
     />
 
     <div class="flex-1">
       <LayoutNavbar class="sticky top-0 z-10 hidden bg-white md:flex" />
-
       <div
-        class="hide-scrollbar max-h-[calc(100vh-76px)] !max-w-[calc(100vw-257px)] overflow-scroll p-5"
+        class="hide-scrollbar max-h-[calc(100vh-76px)] overflow-auto bg-white"
       >
-        <slot />
+        <slot class="" />
       </div>
     </div>
-  </UContainer>
+  </div>
 </template>
 
 <script setup lang="ts">

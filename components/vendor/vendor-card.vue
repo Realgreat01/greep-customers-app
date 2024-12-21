@@ -14,7 +14,7 @@
     <img
       :src="vendor.bio?.photo?.link ?? '/blank.png'"
       alt=""
-      class="block h-40 w-full rounded-xl object-cover object-center"
+      class="block h-40 w-full rounded-lg object-cover object-center"
     />
     <div class="grid gap-2 p-2.5">
       <VendorName

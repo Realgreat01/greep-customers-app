@@ -1,12 +1,15 @@
 <template>
-  <div class="flex h-fit items-center gap-x-2 lg:w-[1040px] 2xl:w-[1280px]">
+  <div class="ml-12 h-fit !max-w-[calc(100vw-380px)]">
     <UCarousel
       v-slot="{ item }"
       :items="productTags"
-      class="mx-auto w-[90%] rounded-lg"
+      class="rounded-lg"
       :ui="{
-        item: 'mx-2.5',
-        container: 'rounded-lg',
+        item: 'mr-4 ',
+        wrapper: '',
+        container:
+          'relative w-full flex overflow-x-scroll  snap-x snap-mandatory scroll-smooth',
+        // container: 'rounded-lg p-2 ',
       }"
       :prev-button="{
         color: 'gray',
@@ -22,7 +25,7 @@
     >
       <div
         @click="selectTag(item?.id)"
-        class="flex-center flex flex-col gap-2 text-center text-xs font-medium"
+        class="flex-center flex flex-col gap-y-2 text-center text-xs font-medium"
       >
         <UAvatar
           :src="item?.photo?.link ?? placeholderImage"
@@ -31,7 +34,9 @@
           class="bg-gray-400"
           color="primary"
         />
-        <h2 class="first-letter:capitalize">{{ item?.title }}</h2>
+        <h2 class="whitespace-nowrap first-letter:capitalize">
+          {{ item?.title }}
+        </h2>
       </div>
     </UCarousel>
   </div>

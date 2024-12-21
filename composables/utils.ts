@@ -57,7 +57,7 @@ export function calculateDistance(
 
   // Distance in kilometers
   const distance = R * c;
-  if (distance === 0) return "Current";
+  if (distance === 0) return "My location";
   return `${distance.toFixed(2)} km`;
 }
 

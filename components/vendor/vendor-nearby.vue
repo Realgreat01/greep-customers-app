@@ -1,6 +1,10 @@
 <template>
-  <div class="flex gap-x-4 rounded-xl border px-5 py-4">
-    <UAvatar :src="vendor.bio?.photo?.link" size="2xl" />
+  <div class="flex w-64 gap-x-8 rounded-xl border bg-white px-5 py-4">
+    <UAvatar
+      :src="vendor.bio?.photo?.link"
+      size="2xl"
+      :alt="vendor.publicName"
+    />
     <div class="grid gap-1">
       <h2
         class="text-xs"

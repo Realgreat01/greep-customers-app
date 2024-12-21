@@ -1,26 +1,28 @@
 <template>
-  <div class="flex h-fit !max-w-[980px] items-center gap-x-2">
+  <div class="ml-12 h-fit !max-w-[calc(100vw-380px)]">
     <UCarousel
       v-slot="{ item }"
       :items="promotions"
-      class="mx-auto w-[90%] rounded-lg"
+      class="rounded-lg"
       :ui="{
-        item: 'mx-2.5',
-        container: 'rounded-lg',
+        item: 'mr-4',
+        wrapper: '',
+        container:
+          'relative w-full flex overflow-x-scroll  snap-x snap-mandatory scroll-smooth',
       }"
       :prev-button="{
         color: 'gray',
         icon: 'i-icon-carousel-left',
-        class: '-start-12',
+        class: '-start-12 -mt-2.5',
       }"
       :next-button="{
         color: 'gray',
         icon: 'i-icon-carousel-right',
-        class: '-end-12',
+        class: '-end-12 -mt-2.5',
       }"
       arrows
     >
-      <img :src="item" alt="" width="420" height="168" />
+      <img :src="item" alt="" width="440" height="400" />
     </UCarousel>
   </div>
 </template>
