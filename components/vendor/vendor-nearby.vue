@@ -1,5 +1,8 @@
 <template>
-  <div class="flex w-64 gap-x-8 rounded-xl border bg-white px-5 py-4">
+  <div
+    class="flex w-64 gap-x-8 rounded-xl border bg-white px-5 py-4"
+    @click="selectVendor"
+  >
     <UAvatar
       :src="vendor.bio?.photo?.link"
       size="2xl"
@@ -22,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { GP_ROUTES } from "~/constants/routes";
 import { useVendorStore } from "~/store/vendor.store";
 import type { UserEntity } from "~/types/user";
 
@@ -31,8 +35,20 @@ const props = defineProps({
     required: true,
   },
 });
-
+const router = useRouter();
+const { SelectedVendor } = storeToRefs(useVendorStore());
 const { isStoreOpen } = useVendorStore();
+
+const selectVendor = () => {
+  SelectedVendor.value = props.vendor;
+  router.push({
+    name:
+      props.vendor.type.vendorType === "foods"
+        ? GP_ROUTES.RESTURANT.STORE
+        : GP_ROUTES.MARKET.STORE,
+    params: { id: props.vendor.id },
+  });
+};
 </script>
 
 <style scoped></style>

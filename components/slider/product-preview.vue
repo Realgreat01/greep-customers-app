@@ -22,105 +22,129 @@
         class="h-40 w-full rounded-t-xl object-cover object-center"
       />
 
-      <div class="grid flex-1 p-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold">{{ product?.title }}</h2>
-          <UIcon name="i-icon-favorite" class="h-5 w-5" />
-        </div>
-
-        <div class="flex items-center justify-between">
-          <h2 class="text-gray">
-            Starts from
-            <span class="text-lg font-semibold">{{
-              gpNumbers.formatCurrency(
-                product?.price.amount,
-                product?.price.currency,
-              )
-            }}</span>
-          </h2>
-          <div class="flex items-center justify-center gap-1">
-            <UButton
-              @click="quantity > 1 && quantity--"
-              :disabled="quantity <= 1"
-              icon="i-icon-minus"
-              class="flex h-6 w-6 items-center justify-center bg-green-500 fill-white disabled:bg-green-500"
-            />
-            <UButton
-              variant="ghost"
-              class="!font-semibold"
-              :label="quantity.toString()"
-            />
-            <UButton
-              @click="quantity++"
-              icon="i-icon-plus"
-              class="flex h-6 w-6 items-center justify-center bg-green-500 fill-white"
-            />
+      <div class="flex min-h-[65vh] flex-col justify-between p-4">
+        <div class="">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">{{ product?.title }}</h2>
+            <UIcon name="i-icon-favorite" class="h-5 w-5" />
           </div>
-        </div>
 
-        <p class="my-5 max-w-[80%] text-sm text-gray-400">
-          {{ product.description }}
-        </p>
-
-        <div class="my-4" v-if="product.data.type === 'foods'">
-          <h2
-            class="text-base font-semibold"
-            v-if="Object.keys(product.addOns).length > 0"
-          >
-            Extra Add on
-          </h2>
-          <div
-            class="mb-2"
-            v-for="[addOnTitle, addOnProperty] in Object.entries(
-              product.addOns,
-            )"
-          >
-            <h2 class="text-sm font-semibold first-letter:capitalize">
-              {{ addOnTitle }}
+          <div class="flex items-center justify-between">
+            <h2 class="text-gray-500">
+              <span class="font-semibold">{{
+                gpNumbers.formatCurrency(
+                  product?.price.amount,
+                  product?.price.currency,
+                )
+              }}</span>
             </h2>
+            <div class="flex items-center justify-center gap-1">
+              <UButton
+                @click="quantity > 1 && quantity--"
+                :disabled="quantity <= 1"
+                icon="i-icon-minus"
+                class="flex h-6 w-6 items-center justify-center bg-green-500 fill-white disabled:bg-green-500"
+              />
+              <UButton
+                variant="ghost"
+                class="!font-semibold"
+                :label="quantity.toString()"
+              />
+              <UButton
+                @click="quantity++"
+                icon="i-icon-plus"
+                class="flex h-6 w-6 items-center justify-center bg-green-500 fill-white"
+              />
+            </div>
+          </div>
+
+          <p class="my-5 max-w-[80%] text-sm text-gray-400">
+            {{ product.description }}
+          </p>
+
+          <div class="my-4 mb-10" v-if="product.data.type === 'foods'">
             <h2
-              class="text-xs font-normal text-red-500"
-              v-if="addOnProperty.minSelection > 0"
+              class="text-base font-medium"
+              v-if="Object.keys(product.addOns).length > 0"
             >
-              * Required
-              <span class="font-medium text-gray-400"
-                >Select at least ({{ addOnProperty.minSelection }})</span
-              >
+              Extra Add on
             </h2>
-            <h2 class="text-xs font-normal text-gray-400" v-else>Optional</h2>
-            <div class="grid gap-4">
-              <div
-                class="ml-10 flex items-center justify-between text-sm"
-                v-for="[item, property] in Object.entries(addOnProperty.items)"
+            <div
+              class="mb-2"
+              v-for="[addOnTitle, addOnProperty] in Object.entries(
+                product.addOns,
+              )"
+            >
+              <h2 class="text-sm font-medium first-letter:capitalize">
+                {{ addOnTitle }}
+              </h2>
+              <h2
+                class="text-xs font-normal text-red-500"
+                v-if="addOnProperty.minSelection > 0"
               >
-                <h2 class="first-letter:capitalize">{{ item }}</h2>
-                <div class="flex gap-x-1">
-                  <h2 class="">
-                    +
-                    {{
-                      gpNumbers.formatCurrency(
-                        property.price.amount,
-                        property.price.currency,
-                      )
-                    }}
-                  </h2>
+                * Required
+                <span class="font-medium text-gray-400"
+                  >Select at least ({{ addOnProperty.minSelection }})</span
+                >
+              </h2>
+              <h2 class="text-xs font-normal text-gray-400" v-else>Optional</h2>
+              <div class="grid gap-1">
+                <div
+                  class=""
+                  v-for="[item, property] in Object.entries(
+                    addOnProperty.items,
+                  )"
+                >
+                  <div class="ml-10 flex items-center justify-between text-sm">
+                    <h2 class="first-letter:capitalize">{{ item }}</h2>
+                    <div class="flex gap-x-1">
+                      <h2 class="">
+                        +
+                        {{
+                          gpNumbers.formatCurrency(
+                            property.price.amount,
+                            property.price.currency,
+                          )
+                        }}
+                      </h2>
 
-                  <UCheckbox color="green" :ui="{ rounded: 'rounded-full' }" />
+                      <UCheckbox
+                        color="green"
+                        class="!h-4 !w-4"
+                        :value="property"
+                        @change="selectAddons(addOnTitle, item, property.price)"
+                        :ui="{ rounded: 'rounded-full' }"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <UButton
-          label="Add To Cart"
+          label="Add To Cart "
           block
           color="green"
+          size="xl"
           class="justify-self-end"
           icon="i-icon-shopping-cart"
           :disabled="cart.some((cart) => cart.productId === product?.id)"
           @click="addToCart"
         />
+        <!-- v-if="!cart.some((cart) => cart.productId === product?.id)" -->
+
+        <!-- <UButton
+          label="Remove Item "
+          block
+          color="red"
+          size="xl"
+          class="justify-self-end opacity-25"
+          icon="i-icon-shopping-cart"
+          v-if="cart.some((cart) => cart.productId === product?.id)"
+          :disabled="!cart.some((cart) => cart.productId === product?.id)"
+          @click="productStore.removeItemFromCart(product.id)"
+        /> -->
       </div>
     </div>
   </UCard>
@@ -128,6 +152,7 @@
 
 <script setup lang="ts">
 import { useProductStore } from "~/store/product.store";
+import type { Price } from "~/types/product";
 
 const toast = useToast();
 const { selectedProduct: product, cart } = storeToRefs(useProductStore());
@@ -135,11 +160,26 @@ const productStore = useProductStore();
 
 const emit = defineEmits(["openFullCartsModal", "close"]);
 const quantity = ref(1);
+const selectedAddons = ref<
+  { groupName: string; itemName: string; price: Price }[]
+>([]);
 const addToCart = () => {
   if (product.value) {
     toast.add({ title: "Item added to cart succesfully!", color: "green" });
     productStore.addToCart(product.value, quantity.value);
   }
+};
+
+const selectAddons = (groupName: string, itemName: string, price: Price) => {
+  const addOn = selectedAddons.value.find(
+    (item) => item.groupName === groupName && item.itemName === itemName,
+  );
+  if (!addOn) {
+    selectedAddons.value.push({ groupName, itemName, price });
+  } else
+    selectedAddons.value = selectedAddons.value.filter(
+      (item) => item.groupName !== groupName || item.itemName !== itemName,
+    );
 };
 </script>
 

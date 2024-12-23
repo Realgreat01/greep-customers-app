@@ -136,7 +136,7 @@ interface Vendor {
 
 interface UserType {
   type: string;
-  vendorType: string;
+  vendorType: "foods" | "items" | null | undefined;
   name: string;
   email: string;
   website: string;

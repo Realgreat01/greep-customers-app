@@ -1,7 +1,5 @@
 import { defineStore } from "pinia";
-import TypedStorage from "typed-local-store";
 import { ProductService } from "~/services/product.service";
-import { VendorService } from "~/services/vendor.service";
 import type {
   ProductEntity,
   CartEntity,
@@ -80,6 +78,9 @@ export const useProductStore = defineStore("ProductStore", {
 
     foodProducts(state: ProductStore): ProductStore["Products"] {
       return state.Products.filter((product) => product.data.type === "foods");
+    },
+    marketProducts(state: ProductStore): ProductStore["Products"] {
+      return state.Products.filter((product) => product.data.type === "items");
     },
 
     vendorProducts(state: ProductStore): ProductStore["VendorProducts"] {
@@ -180,8 +181,14 @@ export const useProductStore = defineStore("ProductStore", {
       }
     },
 
-    removeItemFromCart(productId: string, productIndex: number) {
-      this.SelectedVendorCart?.products.splice(productIndex, 1);
+    removeItemFromCart(productId: string) {
+      if (this.SelectedVendorCart) {
+        this.SelectedVendorCart.products =
+          this.SelectedVendorCart.products.filter(
+            (cart) => cart.productId !== productId,
+          );
+      }
+
       cartStorage.value.Cart = cartStorage.value.Cart.filter(
         (cart) => cart.productId !== productId,
       );

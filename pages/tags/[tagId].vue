@@ -1,6 +1,6 @@
 <template>
   <div class="grid gap-8 p-5">
-    <div class="mx-auto mt-3 w-[94%]">
+    <div class="mx-auto mt-3 w-full">
       <UInput
         icon="i-icon-search-icon"
         size="xl"

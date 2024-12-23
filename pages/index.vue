@@ -1,6 +1,6 @@
 <template>
   <div class="grid gap-0">
-    <div class="mx-auto mt-2 w-[94%] p-5">
+    <div class="mx-auto mt-2 w-full p-5">
       <UInput
         icon="i-icon-search-icon"
         size="xl"
@@ -27,7 +27,7 @@
 
     <div class="p-5">
       <CarouselProducts
-        :products="latestProducts"
+        :products="marketProducts"
         :delay="500"
         title="Trending Products"
       />
@@ -35,7 +35,7 @@
 
     <div class="p-5">
       <CarouselProducts
-        :products="mostSoldProducts"
+        :products="marketProducts"
         :delay="250"
         title="Latest Products"
       />
@@ -58,7 +58,7 @@ definePageMeta({
 });
 
 const { vendors } = storeToRefs(useVendorStore());
-const { foodProducts, mostSoldProducts, latestProducts } =
+const { foodProducts, marketProducts, mostSoldProducts, latestProducts } =
   storeToRefs(useProductStore());
 const { productTags } = storeToRefs(useInteractionStore());
 

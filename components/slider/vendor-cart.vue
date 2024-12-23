@@ -57,7 +57,7 @@
                 icon="i-icon-trash"
                 variant="ghost"
                 color="red"
-                @click="removeItemFromCart(product.productId, index)"
+                @click="removeItemFromCart(product.productId)"
                 class="text-sm font-normal"
                 :ui="{ font: 'font-normal' }"
               />
@@ -119,8 +119,8 @@ const openCheckoutModal = (cart: VendorCartEntity) => {
   emit("openCheckoutModal");
 };
 
-const removeItemFromCart = (productId: string, productIndex: number) => {
-  productStore.removeItemFromCart(productId, productIndex);
+const removeItemFromCart = (productId: string) => {
+  productStore.removeItemFromCart(productId);
   if (selectedVendorCart.value?.products.length === 0) {
     emit("close");
   }

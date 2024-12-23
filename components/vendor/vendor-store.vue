@@ -26,6 +26,25 @@
               : 'Greep Store'
           "
         />
+        <div class="flex items-center gap-x-10">
+          <UButton
+            square
+            icon="i-icon-chat"
+            size="xl"
+            variant="soft"
+            color="green"
+            class="p-2"
+            :ui="{ rounded: 'rounded-full' }"
+          />
+          <UInput
+            icon="i-icon-search-icon"
+            size="lg"
+            color="white"
+            :trailing="false"
+            :ui="{ rounded: 'rounded-3xl' }"
+            placeholder="Search Store"
+          />
+        </div>
       </div>
 
       <div class="flex items-center justify-between">
@@ -51,25 +70,6 @@
               }}
             </span>
           </h2>
-        </div>
-        <div class="flex items-center gap-x-2">
-          <UButton
-            square
-            icon="i-icon-chat"
-            size="xl"
-            variant="soft"
-            color="green"
-            class="p-2"
-            :ui="{ rounded: 'rounded-full' }"
-          />
-          <UInput
-            icon="i-icon-search-icon"
-            size="lg"
-            color="white"
-            :trailing="false"
-            :ui="{ rounded: 'rounded-3xl' }"
-            placeholder="Search Store"
-          />
         </div>
       </div>
     </div>

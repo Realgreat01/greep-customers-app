@@ -112,6 +112,28 @@ interface CartEntity {
   quantity: number;
 }
 
+interface Pack {
+  amount: number;
+  currency: string;
+  id: string;
+  quantity: number;
+  addOns: any[]; // Adjust type based on the structure of addOns
+}
+
+export interface CartLinkEntity {
+  id: string;
+  packs: Pack[][];
+  userId: string;
+  vendorId: string;
+  vendorType: string;
+  active: boolean;
+  createdAt: number;
+  updatedAt: number;
+  __hash: string;
+  __type: string;
+  products: Record<string, ProductEntity>;
+}
+
 interface VendorCartEntity {
   vendorId: CartEntity["vendorId"];
   vendor: CartEntity["vendor"];
