@@ -126,7 +126,7 @@ import { useProductStore } from "~/store/product.store";
 import type { VendorCartEntity } from "~/types/product";
 
 const toast = useToast();
-const { vendorCarts, Cart } = storeToRefs(useProductStore());
+const { vendorCarts } = storeToRefs(useProductStore());
 const productStore = useProductStore();
 
 const emit = defineEmits(["openCheckoutModal", "openFullCartsModal", "close"]);

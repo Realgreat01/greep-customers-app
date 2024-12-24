@@ -31,6 +31,7 @@
     "vee-validate": "^4.14.7",
     "vue-tel-input": "^9.2.0",
     "vue3-carousel": "^0.10.0",
+    "vue3-emoji-picker": "^1.1.8",
     "vue3-google-autocomplete": "^0.0.5",
     "yup": "^1.4.0"
   },

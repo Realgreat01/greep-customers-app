@@ -195,6 +195,12 @@ export const useProductStore = defineStore("ProductStore", {
       toast.add({ title: "Product removed successfully!", color: "red" });
     },
 
+    checkOutVendorCart(vendorId: string) {
+      cartStorage.value.Cart = cartStorage.value.Cart.filter(
+        (cart) => cart.vendorId !== vendorId,
+      );
+    },
+
     selectVendorCart(cart: VendorCartEntity) {
       this.SelectedVendorCart = cart;
     },

@@ -34,6 +34,7 @@
             variant="soft"
             color="green"
             class="p-2"
+            @click="openChatsModal = true"
             :ui="{ rounded: 'rounded-full' }"
           />
           <UInput
@@ -51,9 +52,13 @@
         <div class="flex gap-x-10">
           <h2 class="text-xs text-[#7E8392]">
             Opening Hours
-            <span class="block text-sm text-black">{{
-              gpDates.getVendorSchedule(selectedVendor.vendor.schedule)
-            }}</span>
+            <span
+              class="block text-sm text-black"
+              v-if="selectedVendor.vendor.schedule"
+              >{{
+                gpDates.getVendorSchedule(selectedVendor.vendor.schedule)
+              }}</span
+            >
           </h2>
 
           <h2
@@ -147,6 +152,15 @@
         <ProductCard :product="product" v-for="product in vendorProducts" />
       </div>
     </div>
+
+    <USlideover
+      v-model="openChatsModal"
+      :overlay="false"
+      class="z-[2000]"
+      v-if="selectedVendor"
+    >
+      <SliderChatMessage @close="openChatsModal = false" />
+    </USlideover>
   </div>
 </template>
 
@@ -164,6 +178,8 @@ const vendorStore = useVendorStore();
 
 const route = useRoute();
 const router = useRouter();
+
+const openChatsModal = ref(false);
 
 const reviews = ref([
   {

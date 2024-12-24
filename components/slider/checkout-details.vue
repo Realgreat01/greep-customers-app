@@ -179,7 +179,7 @@ const emit = defineEmits(["close", "completed"]);
 
 const OrderForm = ref<any>();
 const errors = ref<{ location: any }>({ location: undefined });
-const { selectedVendorCart, orderInfo, Cart } = storeToRefs(useProductStore());
+const { selectedVendorCart, orderInfo } = storeToRefs(useProductStore());
 const productStore = useProductStore();
 const paymentStore = usePaymentStore();
 const loadingLocation = ref(false);
@@ -265,13 +265,12 @@ async function checkOutOrder(field: any) {
         location: state.location,
         notes: state.notes,
       });
-      productStore.setOrderInfo(state);
-
-      Cart.value = Cart.value.filter(
-        (cart) => cart.vendorId !== selectedVendorCart.value?.vendorId,
-      );
-      window.open(whatsappLink, "_blank");
-      emit("completed");
+      if (selectedVendorCart.value) {
+        productStore.setOrderInfo(state);
+        productStore.checkOutVendorCart(selectedVendorCart.value.vendorId);
+        window.open(whatsappLink, "_blank");
+        emit("completed");
+      }
     }
   } catch (validationError) {
     // Handle validation error

@@ -1,3 +1,5 @@
+declare module "vue3-emoji-picker";
+
 import type { CartEntity } from "./product";
 
 export interface WhatsAppMessage {

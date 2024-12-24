@@ -13,6 +13,32 @@ export const gpDates = {
     return format(new Date(date), "MMM dd, 'at' h:mm a");
   },
 
+  getReadableDate(date: string | Date) {
+    date = new Date(date);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    if (date.toDateString() === today.toDateString()) return "Today";
+    else if (date.toDateString() === yesterday.toDateString())
+      return "Yesterday";
+    else
+      return date.toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+  },
+
+  getTime(date: string | Date) {
+    const dateString = new Date(date);
+    const time = dateString.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+    return time;
+  },
+
   getTimeAgo(date: string | Date) {
     if (isToday(date)) {
       return "Today";
@@ -21,6 +47,9 @@ export const gpDates = {
     } else {
       return timeago.format(date);
     }
+  },
+  getExactTimeAgo(date: string | Date) {
+    return timeago.format(date);
   },
 
   formatMonthYear(date: Date | string) {

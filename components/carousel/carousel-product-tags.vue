@@ -5,7 +5,7 @@
       :items="productTags"
       class="rounded-lg"
       :ui="{
-        item: 'mr-4 ',
+        item: 'mr-4',
         wrapper: '',
         container:
           'relative w-full flex overflow-x-scroll  snap-x snap-mandatory scroll-smooth',
@@ -30,11 +30,20 @@
         <UAvatar
           :src="item?.photo?.link ?? placeholderImage"
           :alt="item?.title"
+          :class="[
+            route.params.tagId === item?.id ? 'border-primary border' : '',
+          ]"
           size="lg"
-          class="bg-gray-400"
           color="primary"
         />
-        <h2 class="whitespace-nowrap first-letter:capitalize">
+        <h2
+          class="whitespace-nowrap first-letter:capitalize"
+          :class="[
+            route.params.tagId === item?.id
+              ? 'text-sm font-semibold text-green-500'
+              : '',
+          ]"
+        >
           {{ item?.title }}
         </h2>
       </div>
@@ -72,6 +81,8 @@ const selectTag = (tagId: string) => {
     params: { tagId },
   });
 };
+
+const route = useRoute();
 </script>
 
 <style scoped></style>
