@@ -34,7 +34,15 @@
             variant="soft"
             color="green"
             class="p-2"
-            @click="openChatsModal = true"
+            :disabled="selectedVendor.id === user?.id"
+            @click="
+              messageStore.setActiveChat(
+                selectedVendor.id,
+                'personal',
+                selectedVendor.publicName,
+              );
+              openChatsModal = true;
+            "
             :ui="{ rounded: 'rounded-full' }"
           />
           <UInput
@@ -140,13 +148,25 @@
       </div>
     </div>
 
-    <div class="bg-[#0092600D] p-5">
-      <CarouselProducts :products="vendorProducts" title="Top Meals" />
+    <div class="bg-[#0092600D] p-5" v-if="selectedVendor">
+      <CarouselProducts
+        :products="vendorProducts"
+        :title="
+          selectedVendor?.type?.vendorType === 'foods'
+            ? 'Top Meals'
+            : 'Top Products'
+        "
+      />
     </div>
 
     <div class="grid gap-1 p-5">
       <h2 class="mb-2 flex items-center gap-x-2 text-xl font-semibold">
-        <UIcon name="i-icon-landmark hidden" />Our Menu
+        <template v-if="selectedVendor?.type?.vendorType === 'foods'">
+          <UIcon name="i-icon-landmark " />Our Menu
+        </template>
+        <template v-else>
+          <UIcon name="i-icon-landmark " />Our Products</template
+        >
       </h2>
       <div class="flex flex-wrap gap-4">
         <ProductCard :product="product" v-for="product in vendorProducts" />
@@ -166,16 +186,19 @@
 
 <script setup lang="ts">
 import { GP_ROUTES } from "~/constants/routes";
+import { useAuthStore } from "~/store/auth.store";
+import { useMessageStore } from "~/store/message.store";
 import { useProductStore } from "~/store/product.store";
 import { useVendorStore } from "~/store/vendor.store";
 import type { UserEntity } from "~/types/user";
 
 const { selectedVendor } = storeToRefs(useVendorStore());
 const { vendorProducts, productLoadingStates } = storeToRefs(useProductStore());
+const { user } = storeToRefs(useAuthStore());
 
 const productStore = useProductStore();
 const vendorStore = useVendorStore();
-
+const messageStore = useMessageStore();
 const route = useRoute();
 const router = useRouter();
 

@@ -75,13 +75,13 @@
                     currency: x.product.price.currency,
                   })),
                 ]).amount,
-                "TRY",
+                Currency.TRY,
               )
             }}
           </span>
 
           <span class="text-primary font-semibold" v-else>{{
-            gpNumbers.formatCurrency(0, "TRY")
+            gpNumbers.formatCurrency(0, Currency.TRY)
           }}</span>
         </h2>
       </div>
@@ -171,9 +171,10 @@
 import { number, object, string, type InferType } from "yup";
 import { useGeolocation } from "@vueuse/core";
 import { Form as VeeForm } from "vee-validate";
-import type { OrderEntity } from "~/types/product";
 import { useProductStore } from "~/store/product.store";
 import { usePaymentStore } from "~/store/payment.store";
+import { Currency } from "~/types/enums";
+import type { OrderDeliveryEntity } from "~/types/orders";
 
 const emit = defineEmits(["close", "completed"]);
 
@@ -197,14 +198,13 @@ const { resume, coords } = useGeolocation();
 
 type Schema = InferType<typeof schema>;
 
-const state = reactive<OrderEntity>({
+const state = reactive<OrderDeliveryEntity>({
   apartmentName: orderInfo.value?.apartmentName,
   doorNumber: orderInfo.value?.doorNumber,
   location: orderInfo.value?.location,
   notes: "",
 });
 
-// This will open permission popu
 watch(
   coords,
   (coords) => {
@@ -257,9 +257,9 @@ async function checkOutOrder(field: any) {
                     currency: x.product.price.currency,
                   })),
                 ]).amount,
-                "TRY",
+                Currency.TRY,
               )
-            : gpNumbers.formatCurrency(0, "TRY"),
+            : gpNumbers.formatCurrency(0, Currency.TRY),
         apartmentName: state.apartmentName,
         doorNumber: state.doorNumber,
         location: state.location,

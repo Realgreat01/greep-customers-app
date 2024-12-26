@@ -31,26 +31,75 @@
             class="grid gap-2"
             v-for="(product, index) in selectedVendorCart?.products"
           >
-            <div class="flex items-start justify-start gap-2">
-              <UAvatarGroup size="xl" square :max="4">
-                <UAvatar
-                  :src="product.product.banner.link"
-                  class="border-2 border-white"
-                  :ui="{ rounded: 'rounded-md' }"
-                />
-              </UAvatarGroup>
-              <div class="text-sm">
-                <h2 class="">{{ product.product.title }}</h2>
-                <h2 class="font-semibold">
-                  {{
-                    gpNumbers.formatCurrency(
-                      product.product.price.amount,
-                      product.product.price.currency,
-                    )
-                  }}
-                </h2>
+            <div class="flex w-full items-start justify-between gap-2">
+              <div class="flex w-full items-start gap-2">
+                <UAvatarGroup size="xl" square :max="4">
+                  <UAvatar
+                    :src="product.product.banner.link"
+                    class="border-2 border-white"
+                    :ui="{ rounded: 'rounded-md' }"
+                  />
+                </UAvatarGroup>
+                <div class="w-full text-sm">
+                  <div class="flex w-full items-start justify-between">
+                    <div class="">
+                      <h2 class="">{{ product.product.title }}</h2>
+                      <h2 class="text-sm font-semibold">
+                        {{
+                          gpNumbers.formatCurrency(
+                            product.product.price.amount,
+                            product.product.price.currency,
+                          )
+                        }}
+                      </h2>
+                    </div>
+                    <h2 class="ml-auto text-base font-semibold">
+                      <span class="">Total : </span>
+                      {{
+                        gpNumbers.formatCurrency(
+                          getTotalPrice(product.product, product.quantity)
+                            .amount,
+                          getTotalPrice(product.product, product.quantity)
+                            .currency,
+                        )
+                      }}
+                    </h2>
+                  </div>
+                  <div
+                    class=""
+                    v-if="
+                      product.product?.selectedAddOns &&
+                      product.product?.selectedAddOns.length > 0
+                    "
+                  >
+                    <!-- <h2 class="text-xs font-semibold">Extra AddOns</h2> -->
+                    <div class="flex flex-wrap gap-2">
+                      <UBadge
+                        variant="soft"
+                        color="green"
+                        class="flex min-w-fit flex-wrap gap-2 whitespace-nowrap p-[2px] px-2 text-xs"
+                        v-for="(addOn, index) in product.product.selectedAddOns"
+                      >
+                        <h2 class="first-letter:capitalize">
+                          {{ addOn.itemName }}
+                        </h2>
+
+                        <h2 class="">
+                          ({{
+                            gpNumbers.formatCurrency(
+                              addOn.price.amount,
+                              addOn.price.currency,
+                            )
+                          }}
+                          x {{ addOn.quantity }})
+                        </h2>
+                      </UBadge>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+
             <div class="flex items-center justify-between">
               <UButton
                 label="Remove"
@@ -101,8 +150,9 @@
 </template>
 
 <script setup lang="ts">
+import { usePaymentStore } from "~/store/payment.store";
 import { useProductStore } from "~/store/product.store";
-import type { VendorCartEntity } from "~/types/product";
+import type { Price, ProductEntity, VendorCartEntity } from "~/types/product";
 
 defineProps({
   vendorCart: {
@@ -113,6 +163,8 @@ defineProps({
 
 const { selectedVendorCart } = storeToRefs(useProductStore());
 const productStore = useProductStore();
+const paymentStore = usePaymentStore();
+
 const emit = defineEmits(["openCheckoutModal", "openFullCartsModal", "close"]);
 const openCheckoutModal = (cart: VendorCartEntity) => {
   productStore.selectVendorCart(cart);
@@ -124,6 +176,36 @@ const removeItemFromCart = (productId: string) => {
   if (selectedVendorCart.value?.products.length === 0) {
     emit("close");
   }
+};
+
+const getTotalPrice: Price[] | any = (
+  product: ProductEntity,
+  quantity: number,
+) => {
+  const selectedAddonsPrice = () => {
+    if (product.selectedAddOns) {
+      return product.selectedAddOns.map((addon) => ({
+        amount: addon.price.amount * addon.quantity,
+        currency: addon.price.currency,
+      }));
+    } else {
+      return [
+        {
+          amount: 0,
+          currency: product.price.currency,
+        },
+      ];
+    }
+  };
+
+  let total = paymentStore.getTotalProductCost([
+    {
+      amount: product.price.amount * quantity,
+      currency: product.price.currency,
+    },
+    ...selectedAddonsPrice(),
+  ]);
+  return total;
 };
 </script>
 

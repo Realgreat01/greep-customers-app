@@ -1,3 +1,5 @@
+import { Currency } from "~/types/enums";
+
 export const gpNumbers = {
   formatNumber(value: number) {
     const formatter = new Intl.NumberFormat("en-US", {
@@ -8,14 +10,14 @@ export const gpNumbers = {
     return formatter.format(value); // Formats the result as a percentage
   },
 
-  formatCurrency(value: number, currency = "TRY") {
+  formatCurrency(value: number, currency = Currency.TRY) {
     let formattedNumber = Number(value);
 
     const formatter = new Intl.NumberFormat("en-US", {
       style: "currency",
       currencyDisplay: "narrowSymbol",
       currency,
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     });
 

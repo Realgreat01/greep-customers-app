@@ -6,11 +6,18 @@ import type {
   OrderEntity,
   VendorCartEntity,
   TagEntity,
+  PackEntity,
+  CartLinkEntity,
 } from "~/types/product";
 import { useInteractionStore } from "./interactions.store";
 import { useStorage } from "@vueuse/core";
+import { useAuthStore } from "./auth.store";
 
-const cartStorage = useStorage<{ Cart: CartEntity[] }>("Cart", { Cart: [] });
+const cartStorage = useStorage<{ Cart: CartEntity[]; currentCartId: string }>(
+  "Cart",
+  { Cart: [], currentCartId: "" },
+);
+
 const toast = useToast();
 
 interface ProductStore {
@@ -21,12 +28,16 @@ interface ProductStore {
   ProductsByTag: { tag: TagEntity; products: ProductEntity[] } | null;
   VendorProducts: ProductEntity[];
   SelectedVendorCart: VendorCartEntity | null;
+
+  CartLinks: CartLinkEntity[];
+
   productLoadingStates: {
     loadingProducts: boolean;
     loadingMostSoldProducts: boolean;
     loadingLatestProducts: boolean;
     loadingVendorProducts: boolean;
   };
+
   OrderInfo: OrderEntity;
 }
 
@@ -40,6 +51,7 @@ export const useProductStore = defineStore("ProductStore", {
       ProductsByTag: null,
       VendorProducts: [],
       SelectedVendorCart: null,
+      CartLinks: [],
       OrderInfo: {
         apartmentName: undefined,
         doorNumber: undefined,
@@ -56,39 +68,23 @@ export const useProductStore = defineStore("ProductStore", {
   },
 
   getters: {
-    products(state: ProductStore): ProductStore["Products"] {
-      return state.Products;
-    },
+    products: (state: ProductStore) => state.Products,
+    selectedProduct: (state: ProductStore) => state.SelectedProduct,
+    mostSoldProducts: (state: ProductStore) => state.MostSoldProducts,
+    latestProducts: (state: ProductStore) => state.LatestProducts,
+    productsByTag: (state: ProductStore) => state.ProductsByTag,
 
-    selectedProduct(state: ProductStore): ProductStore["SelectedProduct"] {
-      return state.SelectedProduct;
-    },
+    foodProducts: (state: ProductStore) =>
+      state.Products.filter((product) => product.data.type === "foods"),
 
-    mostSoldProducts(state: ProductStore): ProductStore["MostSoldProducts"] {
-      return state.MostSoldProducts;
-    },
+    marketProducts: (state: ProductStore) =>
+      state.Products.filter((product) => product.data.type === "items"),
 
-    latestProducts(state: ProductStore): ProductStore["LatestProducts"] {
-      return state.LatestProducts;
-    },
+    vendorProducts: (state: ProductStore) => state.VendorProducts,
 
-    productsByTag(state: ProductStore): ProductStore["ProductsByTag"] {
-      return state.ProductsByTag;
-    },
-
-    foodProducts(state: ProductStore): ProductStore["Products"] {
-      return state.Products.filter((product) => product.data.type === "foods");
-    },
-    marketProducts(state: ProductStore): ProductStore["Products"] {
-      return state.Products.filter((product) => product.data.type === "items");
-    },
-
-    vendorProducts(state: ProductStore): ProductStore["VendorProducts"] {
-      return state.VendorProducts;
-    },
-
-    cart(): CartEntity[] {
-      return cartStorage.value.Cart;
+    cart: (): CartEntity[] => cartStorage.value.Cart,
+    cartlinks(state: ProductStore): CartLinkEntity[] {
+      return state.CartLinks;
     },
 
     selectedVendorCart(
@@ -132,6 +128,12 @@ export const useProductStore = defineStore("ProductStore", {
     },
 
     selectProduct(product: ProductEntity) {
+      Object.keys(product.addOns).forEach((group) => {
+        const items = product.addOns[group].items;
+        Object.keys(items).forEach((itemName) => {
+          items[itemName].quantity = 1;
+        });
+      });
       this.SelectedProduct = product;
     },
 
@@ -187,6 +189,7 @@ export const useProductStore = defineStore("ProductStore", {
           this.SelectedVendorCart.products.filter(
             (cart) => cart.productId !== productId,
           );
+        this.resetSelectedAddons(productId);
       }
 
       cartStorage.value.Cart = cartStorage.value.Cart.filter(
@@ -196,6 +199,7 @@ export const useProductStore = defineStore("ProductStore", {
     },
 
     checkOutVendorCart(vendorId: string) {
+      this.resetSelectedAddonsByVendor(vendorId);
       cartStorage.value.Cart = cartStorage.value.Cart.filter(
         (cart) => cart.vendorId !== vendorId,
       );
@@ -206,11 +210,62 @@ export const useProductStore = defineStore("ProductStore", {
     },
 
     deleteVendorCart(vendorId: string) {
+      this.resetSelectedAddonsByVendor(vendorId);
       const cart = cartStorage.value.Cart.filter(
         (cart) => cart.vendorId !== vendorId,
       );
       cartStorage.value.Cart = cart;
       toast.add({ title: "Vendor carts deleted successfully!", color: "red" });
+    },
+
+    resetSelectedAddons(productId: string) {
+      this.products.map((product) => {
+        if (product.id === productId) product.selectedAddOns = [];
+      });
+      this.mostSoldProducts.map((product) => {
+        if (product.id === productId) product.selectedAddOns = [];
+      });
+      this.latestProducts.map((product) => {
+        if (product.id === productId) product.selectedAddOns = [];
+      });
+    },
+
+    resetSelectedAddonsByVendor(vendorId: string) {
+      cartStorage.value.Cart.map((cart) => {
+        if (vendorId === cart.vendorId) {
+          this.resetSelectedAddons(cart.productId);
+        }
+      });
+    },
+
+    // CartLinks
+    async createCartlink(packs: PackEntity[]) {
+      const res = await ProductService.createCartLink(packs);
+      if (res.success) {
+        cartStorage.value.currentCartId = res.data.id;
+      } else {
+        toast.add({
+          title: res.message ?? "Error! creating order",
+          color: "red",
+        });
+      }
+    },
+
+    async getCartLink(cartLinkId: string) {
+      const res = await ProductService.getCartLink(cartLinkId);
+      if (res.success) {
+      }
+    },
+
+    async getUserCartLinks() {
+      const { user } = storeToRefs(useAuthStore());
+
+      if (user.value) {
+        const res = await ProductService.getUserCartLinks(user.value.id);
+        if (res.success) {
+          this.CartLinks = res.data.results;
+        }
+      }
     },
 
     setOrderInfo(orderInfo: OrderEntity) {

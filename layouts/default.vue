@@ -18,6 +18,8 @@
 <script setup lang="ts">
 import { useAuthStore } from "~/store/auth.store";
 import { useInteractionStore } from "~/store/interactions.store";
+import { useMessageStore } from "~/store/message.store";
+import { useOrderStore } from "~/store/order.store";
 import { usePaymentStore } from "~/store/payment.store";
 import { useProductStore } from "~/store/product.store";
 import { useUtilsStore } from "~/store/utils.store";
@@ -29,6 +31,8 @@ const authStore = useAuthStore();
 const paymentStore = usePaymentStore();
 const productsStore = useProductStore();
 const interactionsStore = useInteractionStore();
+const messageStore = useMessageStore();
+const orderStore = useOrderStore();
 
 onBeforeMount(async () => {
   await vendorStore.getVendors();
@@ -46,6 +50,11 @@ onBeforeMount(async () => {
   await productsStore.getProducts();
   await productsStore.getMostSoldProducts();
   await productsStore.getLatestProducts();
+  await productsStore.getUserCartLinks();
+
+  await messageStore.getChatHistory();
+
+  await orderStore.getOrders();
 });
 </script>
 

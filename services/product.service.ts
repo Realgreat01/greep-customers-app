@@ -1,3 +1,4 @@
+import type { PackEntity } from "~/types/product";
 import ApiService from "./api-service.service";
 
 export class ProductService {
@@ -75,7 +76,38 @@ export class ProductService {
           { field: "inStock", value: true },
         ]),
         whereType: "and",
+
         ...params,
+      },
+    });
+  };
+
+  static createCartLink = async (data: PackEntity[]) => {
+    return await ApiService.run({
+      method: ApiService.POST,
+      url: "/marketplace/cartLinks",
+      data,
+    });
+  };
+
+  static getCartLink = async (cartId: string) => {
+    return ApiService.run({
+      method: ApiService.GET,
+      url: `/marketplace/cartLinks${cartId}`,
+    });
+  };
+
+  static getUserCartLinks = async (userId: string) => {
+    return await ApiService.run({
+      method: ApiService.GET,
+      url: "/marketplace/cartLinks",
+      params: {
+        where: JSON.stringify([
+          { field: "userId", value: userId, conditon: "eq" },
+          { field: "active", value: true },
+        ]),
+        whereType: "and",
+        sort: JSON.stringify([{ field: "createdAt", desc: true }]),
       },
     });
   };

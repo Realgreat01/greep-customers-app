@@ -15,14 +15,21 @@
       },
     }"
   >
-    <img
-      :src="product?.banner.link ?? '/blank.png'"
-      alt=""
-      :class="{
-        'rounded-lg': product.data.type === 'items',
-      }"
-      class="mb-2 block h-40 w-full rounded-t-lg object-cover object-[50%]"
-    />
+    <div class="relative">
+      <img
+        :src="product?.banner.link ?? '/blank.png'"
+        alt=""
+        :class="{
+          'rounded-lg': product.data.type === 'items',
+        }"
+        class="mb-2 block h-40 w-full rounded-t-lg object-cover object-[50%]"
+      />
+      <UButton
+        icon="i-icon-plus"
+        v-if="product.data.type === 'items'"
+        class="flex-center absolute bottom-2 right-2 flex h-8 w-8 rounded-full bg-white text-center text-gray-500"
+      />
+    </div>
     <div
       class="grid gap-2"
       :class="{
@@ -86,8 +93,8 @@ const openProductPreview = ref(false);
 const quantity = ref(1);
 
 const selectProduct = () => {
-  openProductPreview.value = true;
   productStore.selectProduct(props.product);
+  openProductPreview.value = true;
 };
 
 const addToCart = () => {

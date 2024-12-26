@@ -3,7 +3,7 @@
     <UForm
       :schema="schema"
       :state="state"
-      class="mx-auto mt-4 grid w-full gap-4"
+      class="mx-auto mt-4 grid w-full gap-4 p-2"
       @submit.prevent="handleSubmit($event, updateUser)"
     >
       <UFormGroup label="Firstname" name="firstName" required>

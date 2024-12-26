@@ -7,7 +7,7 @@ import { AuthService } from "~/services/auth.service";
 
 import type { LoginPayload, UserProfilePayload } from "~/types/auth";
 import type { AuthUserEntity, UserEntity } from "~/types/user";
-
+const toast = useToast();
 interface UserAuth {
   User: AuthUserEntity | null;
   UserProfile: UserEntity | null;
@@ -40,12 +40,12 @@ export const useAuthStore = defineStore("AuthStore", {
 
   actions: {
     async loginUser(data: LoginPayload) {
-      const toast = useToast();
       const route = useRoute();
       const router = useRouter();
       const res = await AuthService.login(data);
       if (res.success) {
-        ApiService.setToken(res.data.accessToken);
+        ApiService.setAccessToken(res.data.accessToken);
+        ApiService.setRefreshToken(res.data.refreshToken);
         this.authUser();
         this.IsLoggedIn = true;
         toast.add({ title: "Login Successful", color: "green" });
@@ -82,11 +82,34 @@ export const useAuthStore = defineStore("AuthStore", {
     },
 
     async authUser() {
-      const toast = useToast();
       const res = await AuthService.currentUser();
       if (res.success) {
         this.User = res.data;
         await this.getUserProfile(res.data.id);
+      } else {
+        this.exchangeToken();
+      }
+    },
+
+    async updateUser(data: any) {
+      const res = await AuthService.updateUserProfile(data);
+      if (res.success) {
+        toast.add({
+          title: "Details updated successfully !",
+          color: "green",
+        });
+        await this.authUser();
+        return true;
+      }
+    },
+
+    async exchangeToken() {
+      const res = await AuthService.exchangeToken();
+      if (res.success) {
+        ApiService.setAccessToken(res.data.accessToken);
+        ApiService.setRefreshToken(res.data.refreshToken);
+        this.authUser();
+        this.IsLoggedIn = true;
       } else {
         if (res.code === 461) {
           this.logout();
@@ -95,20 +118,6 @@ export const useAuthStore = defineStore("AuthStore", {
             color: "red",
           });
         }
-      }
-    },
-
-    async updateUser(data: any) {
-      const toast = useToast();
-      const res = await AuthService.updateUserProfile(data);
-      if (res.success) {
-        toast.add({
-          title: "Details updated successfully !",
-          color: "green",
-        });
-
-        await this.authUser();
-        return true;
       }
     },
 

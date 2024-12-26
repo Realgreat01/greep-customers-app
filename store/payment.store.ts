@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import { PaymentService } from "~/services/payment.service";
-import { UtilsService } from "~/services/utils.service.service";
-import type { Price } from "~/types/product";
+import { Currency } from "~/types/enums";
+import { type Price } from "~/types/product";
+
 interface PaymentStore {
   ExchangeRate: { TRY: number; NGN: number; USD: number };
 }
@@ -39,7 +40,7 @@ export const usePaymentStore = defineStore("PaymentStore", {
 
       return {
         amount: parseFloat(totalInBaseCurrency.toFixed(2)),
-        currency: "TRY",
+        currency: Currency.TRY,
       };
     },
   },

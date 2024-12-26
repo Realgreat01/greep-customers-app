@@ -7,7 +7,7 @@
       label="Continue with Google"
       icon="i-icon-google"
     />
-    <VeeForm v-slot="{ handleSubmit, isSubmitting }" class="h-fit">
+    <VeeForm v-slot="{ handleSubmit, isSubmitting }" class="h-fit p-2">
       <UForm
         :schema="schema"
         :state="state"

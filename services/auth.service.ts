@@ -53,4 +53,11 @@ export class AuthService {
       url: "/auth/user/signout",
     });
   };
+
+  static exchangeToken = async () => {
+    return await ApiService.run({
+      method: ApiService.POST,
+      url: "/auth/token",
+    });
+  };
 }

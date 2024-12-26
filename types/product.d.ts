@@ -1,6 +1,8 @@
+import type { Currency } from "./enums";
+
 interface Price {
   amount: number;
-  currency: "NGN" | "USD" | "TRY";
+  currency: Currency;
 }
 
 interface ImageDetails {
@@ -13,21 +15,28 @@ interface ImageDetails {
   link: string;
 }
 
-interface ToppingsItem {
+interface AddonItem {
   price: Price;
   inStock: boolean;
+  quantity?: number;
 }
 
 interface AddOnProperty {
   minSelection: number;
   maxSelection: number;
   items: {
-    [key: string]: ToppingsItem;
+    [key: string]: AddonItem;
   };
 }
 
 interface AddOns {
   [key: string]: AddOnProperty;
+}
+interface SelectedAddOns {
+  price: Price;
+  quantity: number;
+  groupName: string;
+  itemName: string;
 }
 
 interface ProductData {
@@ -83,6 +92,7 @@ interface ProductEntity {
   price: Price;
   tagIds: string[];
   addOns: AddOns;
+  selectedAddOns: SelectedAddOns[];
   inStock: boolean;
   data: ProductData;
   user: User;
@@ -112,17 +122,21 @@ interface CartEntity {
   quantity: number;
 }
 
-interface Pack {
-  amount: number;
-  currency: string;
+interface PackAddons {
+  groupName: string;
+  itemName: string;
+  quantity: number;
+}
+
+export interface PackEntity {
   id: string;
   quantity: number;
-  addOns: any[]; // Adjust type based on the structure of addOns
+  addOns: PackAddons[];
 }
 
 export interface CartLinkEntity {
   id: string;
-  packs: Pack[][];
+  // packs: Pack[][];
   userId: string;
   vendorId: string;
   vendorType: string;
@@ -138,13 +152,6 @@ interface VendorCartEntity {
   vendorId: CartEntity["vendorId"];
   vendor: CartEntity["vendor"];
   products: CartEntity[];
-}
-
-export interface OrderEntity {
-  apartmentName: string | undefined;
-  doorNumber: number | undefined;
-  location: string | undefined;
-  notes?: string;
 }
 
 export interface TagEntity {

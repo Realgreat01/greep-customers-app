@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import QH_CONSTANTS from "~/constants";
+import GP_CONSTANTS from "~/constants";
 import { qhSecuredLS } from "~/utils/secure-ls";
 
 interface IResponse {
@@ -43,17 +43,22 @@ export default class ApiService {
   // Initialize interceptors statically
   static initializeInterceptors() {
     ApiService.http.interceptors.request.use((config) => {
-      const accessToken = qhSecuredLS.get(QH_CONSTANTS.AUTH_TOKEN);
+      const accessToken = qhSecuredLS.get(GP_CONSTANTS.ACCESS_TOKEN);
+      const refreshToken = qhSecuredLS.get(GP_CONSTANTS.REFRESH_TOKEN);
       if (accessToken) {
         config.headers["Access-Token"] = accessToken;
+        config.headers["Refresh-Token"] = refreshToken;
       }
       return config;
     });
   }
 
   // Static token setter
-  public static setToken(token: string) {
-    qhSecuredLS.set(QH_CONSTANTS.AUTH_TOKEN, token);
+  public static setAccessToken(token: string) {
+    qhSecuredLS.set(GP_CONSTANTS.ACCESS_TOKEN, token);
+  }
+  public static setRefreshToken(token: string) {
+    qhSecuredLS.set(GP_CONSTANTS.REFRESH_TOKEN, token);
   }
 
   public static async pingServer() {
@@ -74,15 +79,12 @@ export default class ApiService {
     let response;
     try {
       const serverResponse = await ApiService.http(request);
-      console.log(serverResponse.data);
       response = new ApiResponse({
-        // status: serverResponse.data.meta.status,
-        // code: serverResponse.data.meta.code,
+        status: serverResponse.status,
+        code: serverResponse.status,
         success: true,
-
-        // message: serverResponse.data.message,
-        data: serverResponse.data.data ?? serverResponse.data,
-        // meta: serverResponse.data.meta,
+        message: serverResponse.statusText,
+        data: serverResponse.data,
       });
     } catch (err: AxiosError | any) {
       if (!err.response) {

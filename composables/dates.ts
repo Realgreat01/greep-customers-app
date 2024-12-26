@@ -13,6 +13,14 @@ export const gpDates = {
     return format(new Date(date), "MMM dd, 'at' h:mm a");
   },
 
+  formatMonthYear(date: Date | string) {
+    return format(new Date(date), "MMM yyyy");
+  },
+
+  formatIntlDate(date: Date | string) {
+    return format(new Date(date), "dd/MMM/yyyy");
+  },
+
   getReadableDate(date: string | Date) {
     date = new Date(date);
     const today = new Date();
@@ -39,6 +47,17 @@ export const gpDates = {
     return time;
   },
 
+  getChatsTime(date: string | Date) {
+    date = new Date(date);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    if (date.toDateString() === today.toDateString()) return this.getTime(date);
+    else if (date.toDateString() === yesterday.toDateString())
+      return "Yesterday";
+    else return this.formatDate(date);
+  },
+
   getTimeAgo(date: string | Date) {
     if (isToday(date)) {
       return "Today";
@@ -50,14 +69,6 @@ export const gpDates = {
   },
   getExactTimeAgo(date: string | Date) {
     return timeago.format(date);
-  },
-
-  formatMonthYear(date: Date | string) {
-    return format(new Date(date), "MMM yyyy");
-  },
-
-  formatIntlDate(date: Date | string) {
-    return format(new Date(date), "dd/MMM/yyyy");
   },
 
   getTimeDifference(from: number, to: number) {

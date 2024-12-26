@@ -15,6 +15,15 @@ export class GP_ROUTES {
     VENDORS: "vendor-foods",
     STORE: "vendor-foods store",
   };
+  static ORDERS = {
+    USER: "orders",
+  };
+  static WALLETS = {
+    USER: "wallets",
+  };
+  static MESSAGES = {
+    USER: "messages",
+  };
   static SETTINGS = {
     USER: "settings",
   };
