@@ -25,7 +25,7 @@
               <UBadge
                 color="primary"
                 variant="solid"
-                class="flex w-32 items-center justify-center text-center"
+                class="flex w-32 items-center justify-center px-0 text-center"
               >
                 {{ gpDates.getReadableDate(date as string) }}</UBadge
               >
@@ -51,11 +51,7 @@
                 >
                   {{ gpDates.getTime(new Date(chat.createdAt)) }}
                   <UIcon
-                    :name="
-                      chat?.isNew
-                        ? 'i-ph-clock-countdown-light'
-                        : 'i-akar-icons-double-check'
-                    "
+                    :name="chat?.isNew ? 'i-icon-timer' : 'i-icon-double-check'"
                     class="h-3 w-3"
                   />
                 </span>

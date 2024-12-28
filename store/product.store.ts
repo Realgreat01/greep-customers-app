@@ -3,7 +3,7 @@ import { ProductService } from "~/services/product.service";
 import type {
   ProductEntity,
   CartEntity,
-  OrderEntity,
+  // OrderEntity,
   VendorCartEntity,
   TagEntity,
   PackEntity,
@@ -12,6 +12,7 @@ import type {
 import { useInteractionStore } from "./interactions.store";
 import { useStorage } from "@vueuse/core";
 import { useAuthStore } from "./auth.store";
+import type { OrderDeliveryEntity } from "~/types/orders";
 
 const cartStorage = useStorage<{ Cart: CartEntity[]; currentCartId: string }>(
   "Cart",
@@ -38,7 +39,7 @@ interface ProductStore {
     loadingVendorProducts: boolean;
   };
 
-  OrderInfo: OrderEntity;
+  OrderInfo: OrderDeliveryEntity;
 }
 
 export const useProductStore = defineStore("ProductStore", {
@@ -268,7 +269,7 @@ export const useProductStore = defineStore("ProductStore", {
       }
     },
 
-    setOrderInfo(orderInfo: OrderEntity) {
+    setOrderInfo(orderInfo: OrderDeliveryEntity) {
       this.OrderInfo = orderInfo;
     },
   },

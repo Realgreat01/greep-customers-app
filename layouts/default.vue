@@ -42,6 +42,8 @@ onBeforeMount(async () => {
   await vendorStore.getNearByMarketVendors();
 
   await paymentStore.getExchangeRate();
+  await paymentStore.getUserWallet();
+  await paymentStore.getUserTransactions();
 
   await interactionsStore.getProductTags();
   await interactionsStore.getProductFoodsTags();

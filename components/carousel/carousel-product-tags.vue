@@ -31,7 +31,9 @@
           :src="item?.photo?.link ?? placeholderImage"
           :alt="item?.title"
           :class="[
-            route.params.tagId === item?.id ? 'border-primary border' : '',
+            route.params.tagId === item?.id
+              ? 'scale-90 ring-2 ring-red-600'
+              : '',
           ]"
           size="lg"
           color="primary"

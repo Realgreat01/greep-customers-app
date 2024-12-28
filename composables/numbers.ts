@@ -22,12 +22,12 @@ export const gpNumbers = {
     });
 
     if (formattedNumber >= 1e12) {
-      return formatter.format(formattedNumber / 1e12) + "T";
+      return formatter.format(formattedNumber / 1e9) + "B";
     }
     if (formattedNumber >= 1e9) {
-      return formatter.format(formattedNumber / 1e9) + "B";
-    } else if (formattedNumber >= 1e6) {
       return formatter.format(formattedNumber / 1e6) + "M";
+    } else if (formattedNumber >= 1e6) {
+      return formatter.format(formattedNumber / 1e3) + "k";
     } else {
       return formatter.format(formattedNumber);
     }

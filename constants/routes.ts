@@ -16,15 +16,18 @@ export class GP_ROUTES {
     STORE: "vendor-foods store",
   };
   static ORDERS = {
-    USER: "orders",
+    OVERVIEW: "orders",
   };
   static WALLETS = {
-    USER: "wallets",
+    OVERVIEW: "wallets",
+    DEPOSIT: "wallets deposit",
+    WITHDRAW: "wallets withdraw",
+    TRANSFER: "wallets transfer",
   };
   static MESSAGES = {
-    USER: "messages",
+    OVERVIEW: "messages",
   };
   static SETTINGS = {
-    USER: "settings",
+    OVERVIEW: "settings",
   };
 }

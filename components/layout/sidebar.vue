@@ -60,25 +60,19 @@ const sidebarRoutes = ref([
   },
   {
     label: "Orders",
-    route: GP_ROUTES.ORDERS.USER,
+    route: GP_ROUTES.ORDERS.OVERVIEW,
     icon: "i-icon-carts-orders",
     active: "i-icon-carts-orders",
   },
   {
     label: "Wallet",
-    route: GP_ROUTES.WALLETS.USER,
+    route: GP_ROUTES.WALLETS.OVERVIEW,
     icon: "i-icon-wallet",
     active: "i-icon-wallet-active",
   },
   {
-    label: "Messages",
-    route: GP_ROUTES.MESSAGES.USER,
-    icon: "i-icon-chat",
-    active: "i-icon-chat-active",
-  },
-  {
     label: "Settings",
-    route: GP_ROUTES.SETTINGS.USER,
+    route: GP_ROUTES.SETTINGS.OVERVIEW,
     icon: "i-icon-settings",
     active: "i-icon-settings-active",
   },

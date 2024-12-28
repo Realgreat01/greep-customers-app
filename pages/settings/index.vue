@@ -6,7 +6,7 @@
 import { GP_ROUTES } from "~/constants/routes";
 
 definePageMeta({
-  name: GP_ROUTES.SETTINGS.USER,
+  name: GP_ROUTES.SETTINGS.OVERVIEW,
 });
 </script>
 

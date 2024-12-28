@@ -1,7 +1,7 @@
 <template>
   <div class="p-5">
     <h1 class="text-xl font-semibold">Orders</h1>
-    <UTabs :items="items">
+    <UTabs :items="items" :default-index="1">
       <template #active="{ item }">
         This is for all active orders users has placed user can click on each
         other to send support message
@@ -43,21 +43,22 @@ import { GP_ROUTES } from "~/constants/routes";
 import { useProductStore } from "~/store/product.store";
 
 definePageMeta({
-  name: GP_ROUTES.ORDERS.USER,
+  name: GP_ROUTES.ORDERS.OVERVIEW,
 });
 
 const items = [
-  {
-    label: "Active Orders",
-    icon: "i-heroicons-information-circle",
-    slot: "active",
-    content: "This is for all active orders users has placed",
-  },
   {
     label: "Pending Orders",
     icon: "i-heroicons-arrow-down-tray",
     slot: "pending",
     content: "And, this is the content for Tab2",
+  },
+  {
+    label: "Active Orders",
+    icon: "i-heroicons-information-circle",
+    slot: "active",
+    default: true,
+    content: "This is for all active orders users has placed",
   },
   {
     label: "Completed",

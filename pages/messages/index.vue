@@ -83,7 +83,7 @@
               }"
             >
               <UIcon
-                name="i-akar-icons-double-check"
+                name="i-icon-double-check"
                 class="h-4 w-4 text-green-500"
               />
               {{ chat.last.body }}
@@ -104,7 +104,7 @@ import { useAuthStore } from "~/store/auth.store";
 import { useMessageStore } from "~/store/message.store";
 
 definePageMeta({
-  name: GP_ROUTES.MESSAGES.USER,
+  name: GP_ROUTES.MESSAGES.OVERVIEW,
 });
 
 const { user } = storeToRefs(useAuthStore());

@@ -14,7 +14,18 @@
     <div class="flex items-center gap-4">
       <div class="flex items-center gap-x-6">
         <UIcon name="i-icon-alarm-clock" class="block h-6 w-6" />
-        <UIcon name="i-icon-sms" class="block h-6 w-6" />
+        <ULink
+          :to="{ name: GP_ROUTES.MESSAGES.OVERVIEW }"
+          class="rounded-full p-2"
+          :class="
+            route.meta.name &&
+            route.meta.name.includes(GP_ROUTES.MESSAGES.OVERVIEW)
+              ? 'bg-green-200'
+              : ''
+          "
+        >
+          <UIcon name="i-icon-sms" class="block h-6 w-6"
+        /></ULink>
       </div>
       <div
         @click="openCartModal = true"
@@ -152,6 +163,7 @@ const { user, userProfile, isLoggedIn } = storeToRefs(useAuthStore());
 const { cart, selectedVendorCart } = storeToRefs(useProductStore());
 const authStore = useAuthStore();
 const router = useRouter();
+const route = useRoute();
 
 const openProfileUpdateModalForm = ref(false);
 const openProfileSettingsModal = ref(false);
